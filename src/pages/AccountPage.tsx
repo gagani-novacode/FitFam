@@ -1,28 +1,99 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../lib/api';
+import { Footer } from '../components/layout/Footer';
 
 export const AccountPage: React.FC = () => {
   const navigate = useNavigate();
 
+  // Current user state
+  const [user, setUser] = useState<any>(null);
+
   // Login state
-  const [loginEmail, setLoginEmail]       = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-  const [showPassword, setShowPassword]   = useState(false);
-  const [rememberMe, setRememberMe]       = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
   // Register state
+  const [regFirstName, setRegFirstName] = useState('');
+  const [regLastName, setRegLastName] = useState('');
   const [regEmail, setRegEmail] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regError, setRegError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  // Check if logged in on mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const res = await api.get('/auth/me');
+          setUser(res.data.user);
+        } catch (err) {
+          localStorage.removeItem('token');
+        }
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder — no real auth
+    setLoginError('');
+    try {
+      const res = await api.post('/auth/login', { email: loginEmail, password: loginPassword });
+      if (res.data.ok) {
+        localStorage.setItem('token', res.data.user.token);
+        setUser(res.data.user);
+      }
+    } catch (err: any) {
+      setLoginError(err.response?.data?.message || 'Login failed');
+    }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder — no real auth
+    setRegError('');
+    try {
+      const res = await api.post('/auth/register', {
+        firstName: regFirstName,
+        lastName: regLastName,
+        email: regEmail,
+        password: regPassword
+      });
+      if (res.data.ok) {
+        localStorage.setItem('token', res.data.user.token);
+        setUser(res.data.user);
+      }
+    } catch (err: any) {
+      setRegError(err.response?.data?.message || 'Registration failed');
+    }
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+  };
+
+  if (user) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-16">
+        <div className="bg-white p-8 sm:p-10 shadow-sm w-full max-w-md text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome, {user.firstName}!</h2>
+          <p className="text-gray-500 mb-8">{user.email}</p>
+          <button
+            onClick={handleLogout}
+            className="w-full bg-[#c0392b] hover:bg-[#a93226] text-white text-sm font-semibold px-8 py-3 transition-colors cursor-pointer"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-16">
@@ -33,6 +104,7 @@ export const AccountPage: React.FC = () => {
           <h2 className="text-xl font-medium text-gray-900 mb-7">Login</h2>
 
           <form onSubmit={handleLogin} className="space-y-4">
+            {loginError && <p className="text-red-500 text-sm font-medium">{loginError}</p>}
             {/* Email */}
             <div>
               <input
@@ -101,6 +173,29 @@ export const AccountPage: React.FC = () => {
           <h2 className="text-xl font-medium text-gray-900 mb-7">Register</h2>
 
           <form onSubmit={handleRegister} className="space-y-4">
+            {regError && <p className="text-red-500 text-sm font-medium">{regError}</p>}
+            {/* First Name */}
+            <div>
+              <input
+                type="text"
+                required
+                placeholder="First Name *"
+                value={regFirstName}
+                onChange={(e) => setRegFirstName(e.target.value)}
+                className="w-full border border-gray-300 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:border-gray-600 outline-none transition-colors"
+              />
+            </div>
+            {/* Last Name */}
+            <div>
+              <input
+                type="text"
+                required
+                placeholder="Last Name *"
+                value={regLastName}
+                onChange={(e) => setRegLastName(e.target.value)}
+                className="w-full border border-gray-300 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:border-gray-600 outline-none transition-colors"
+              />
+            </div>
             {/* Email */}
             <div>
               <input
@@ -113,9 +208,17 @@ export const AccountPage: React.FC = () => {
               />
             </div>
 
-            <p className="text-sm text-gray-500">
-              A password will be sent to your email address.
-            </p>
+            {/* Password */}
+            <div>
+              <input
+                type="password"
+                required
+                placeholder="Password *"
+                value={regPassword}
+                onChange={(e) => setRegPassword(e.target.value)}
+                className="w-full border border-gray-300 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:border-gray-600 outline-none transition-colors"
+              />
+            </div>
 
             <p className="text-sm text-gray-500 leading-relaxed">
               Your personal data will be used to support your experience throughout

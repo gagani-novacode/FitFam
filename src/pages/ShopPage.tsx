@@ -1,16 +1,20 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ShoppingBag } from 'lucide-react';
-import { products, Product } from '../data/products';
 import { ProductCard } from '../components/ui/ProductCard';
+import { Product } from '../data/products';
 
 interface ShopPageProps {
+  products: Product[];
+  isLoading?: boolean;
   onAddToCart: (product: Product) => void;
   onToggleWishlist: (product: Product) => void;
   wishlistItems: Product[];
 }
 
 export const ShopPage: React.FC<ShopPageProps> = ({
+  products,
+  isLoading,
   onAddToCart,
   onToggleWishlist,
   wishlistItems,
@@ -47,7 +51,12 @@ export const ShopPage: React.FC<ShopPageProps> = ({
 
       {/* ── PRODUCTS GRID ───────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        {products.length === 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-32 gap-4 text-center">
+            <div className="w-8 h-8 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
+            <p className="text-sm font-bold uppercase tracking-widest text-gray-500">Loading Shop...</p>
+          </div>
+        ) : products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 gap-5 text-center">
             <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
               <ShoppingBag className="w-7 h-7 text-gray-300" />

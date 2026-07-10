@@ -5,6 +5,7 @@ import { ChevronRight, Package, Truck, RotateCcw, Phone, Mail, MapPin } from 'lu
 import menImage from '../assets/men.jpg';
 // @ts-ignore
 import womenImage from '../assets/women.jpg';
+import { Footer } from '../components/layout/Footer';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <div className="border-b border-gray-100 pb-10 mb-10 last:border-0 last:mb-0 last:pb-0">
@@ -16,6 +17,10 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 // ─── About Page ───────────────────────────────────────────────────────────
 export const AboutPage: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   // Slides: left text card + right image pair
   const slides = [
@@ -154,7 +159,7 @@ export const AboutPage: React.FC = () => {
 
         </div>
       </div>
-
+      <Footer />
     </div>
   );
 };
@@ -191,6 +196,10 @@ const AccordionItem: React.FC<{ index: number; question: string; answer: React.R
 
 export const FaqPage: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const sections = [
     {
@@ -275,12 +284,17 @@ export const FaqPage: React.FC = () => {
           </div>
         ))}
       </div>
+      <Footer />
     </div>
   );
 };
 
 export const ShippingReturnsPage: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -459,12 +473,17 @@ export const ShippingReturnsPage: React.FC = () => {
         </div>
 
       </div>
+      <Footer />
     </div>
   );
 };
 
 export const ContactPage: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
@@ -509,12 +528,17 @@ export const ContactPage: React.FC = () => {
           </form>
         </Section>
       </div>
+      <Footer />
     </div>
   );
 };
 
 export const TermsPage: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const sections = [
     {
@@ -739,7 +763,7 @@ export const TermsPage: React.FC = () => {
           </div>
         ))}
       </div>
-
+      <Footer />
     </div>
   );
 };
@@ -747,6 +771,10 @@ export const TermsPage: React.FC = () => {
 
 export const PrivacyPage: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const sections = [
     {
@@ -996,7 +1024,7 @@ export const PrivacyPage: React.FC = () => {
           </div>
         ))}
       </div>
-
+      <Footer />
     </div>
   );
 };

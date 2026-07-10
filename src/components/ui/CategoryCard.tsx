@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface CategoryCardProps {
   name: string;
@@ -12,8 +13,8 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   link
 }) => {
   return (
-    <a
-      href={link}
+    <Link
+      to={link}
       className="group relative block w-full aspect-[4/5] sm:aspect-[3/4] md:aspect-[4/5] lg:aspect-[3/4] overflow-hidden bg-gray-900 cursor-pointer"
     >
       {/* Background Image */}
@@ -41,6 +42,6 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
           Shop Now <span className="transition-transform duration-300 group-hover:translate-x-1.5">→</span>
         </span>
       </div>
-    </a>
+    </Link>
   );
 };

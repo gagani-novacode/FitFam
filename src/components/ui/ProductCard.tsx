@@ -68,7 +68,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onAddToCart(product);
+                const defaultSize = product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'M';
+                onAddToCart(product, defaultSize);
               }}
               className="bg-white text-gray-800 p-2 hover:bg-black hover:text-white transition-colors rounded-full shadow-md cursor-pointer"
               title="Add to Cart"

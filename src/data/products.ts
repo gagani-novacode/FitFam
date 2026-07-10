@@ -9,6 +9,8 @@ export interface Product {
   isSale?: boolean;
   badge?: string;
   tags?: string[];
+  sizes?: string[];
+  stock?: Record<string, number>;
 }
 
 export const products: Product[] = [

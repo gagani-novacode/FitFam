@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronRight, Share2, ShoppingBag } from 'lucide-react';
-import { products, Product } from '../data/products';
+import { Product } from '../data/products';
 import { ProductCard } from '../components/ui/ProductCard';
+import { Footer } from '../components/layout/Footer';
 
 interface ProductDetailPageProps {
-    onAddToCart: (product: Product) => void;
+    products: Product[];
+    onAddToCart: (product: Product, size?: string) => void;
     onToggleWishlist: (product: Product) => void;
     wishlistItems: Product[];
 }
@@ -13,6 +15,7 @@ interface ProductDetailPageProps {
 type Tab = 'description' | 'reviews';
 
 export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
+    products,
     onAddToCart,
     onToggleWishlist,
     wishlistItems,
@@ -25,6 +28,11 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     const [selectedSize, setSelectedSize] = useState<string>('M');
     const [activeTab, setActiveTab] = useState<Tab>('description');
     const [qty, setQty] = useState(1);
+
+    // Scroll to the top of the page whenever the product ID changes
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [id]);
 
     // 404 guard
     if (!product) {
@@ -143,8 +151,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                                         key={size}
                                         onClick={() => setSelectedSize(size)}
                                         className={`min-w-[44px] h-10 px-3 border text-sm font-medium transition-all cursor-pointer ${selectedSize === size
-                                                ? 'bg-gray-900 text-white border-gray-900'
-                                                : 'bg-white text-gray-700 border-gray-300 hover:border-gray-900'
+                                            ? 'bg-gray-900 text-white border-gray-900'
+                                            : 'bg-white text-gray-700 border-gray-300 hover:border-gray-900'
                                             }`}
                                     >
                                         {size}
@@ -175,7 +183,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                             {/* Add to cart */}
                             <button
                                 onClick={() => {
-                                    for (let i = 0; i < qty; i++) onAddToCart(product);
+                                    for (let i = 0; i < qty; i++) onAddToCart(product, selectedSize);
                                 }}
                                 className="flex-1 h-12 bg-[#111111] text-white text-xs font-extrabold tracking-widest uppercase hover:bg-gray-800 transition-colors cursor-pointer flex items-center justify-center gap-2"
                             >
@@ -188,8 +196,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                         <button
                             onClick={() => onToggleWishlist(product)}
                             className={`w-full h-11 border text-xs font-extrabold tracking-widest uppercase transition-all cursor-pointer ${isWishlisted
-                                    ? 'border-red-400 text-red-500 bg-red-50 hover:bg-red-100'
-                                    : 'border-gray-300 text-gray-700 hover:border-gray-900 hover:bg-gray-50'
+                                ? 'border-red-400 text-red-500 bg-red-50 hover:bg-red-100'
+                                : 'border-gray-300 text-gray-700 hover:border-gray-900 hover:bg-gray-50'
                                 }`}
                         >
                             {isWishlisted ? '♥ Saved to Wishlist' : '♡ Save to Wishlist'}
@@ -225,8 +233,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
                                 className={`pb-3 text-sm font-medium capitalize tracking-wide transition-colors cursor-pointer border-b-2 -mb-px ${activeTab === tab
-                                        ? 'border-yellow-500 text-yellow-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-800'
+                                    ? 'border-yellow-500 text-yellow-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-800'
                                     }`}
                             >
                                 {tab === 'reviews' ? 'Reviews (0)' : 'Description'}
@@ -286,6 +294,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     </div>
                 )}
             </div>
+            <Footer />
         </div>
     );
 };

@@ -61,12 +61,21 @@ export const NewCollectionSection: React.FC<NewCollectionSectionProps> = ({
                 <div
                   key={product.id}
                   className="w-full sm:w-[calc(50%-40px)] md:w-[calc(33.333%-54px)] flex-shrink-0 snap-start cursor-pointer"
-                  onClick={() => navigate(`/product/${product.id}`)}
+                  onClick={() => {
+                    // 1. Force the viewport window back to the very top coordinates
+                    window.scrollTo(0, 0);
+                    // 2. Route smoothly to the product details page
+                    navigate(`/product/${product.id}`);
+                  }}
                 >
                   <ProductCard
                     product={product}
-                    onAddToCart={(p) => { onAddToCart(p); }}
-                    onToggleWishlist={(p) => { onToggleWishlist(p); }}
+                    onAddToCart={(p) => {
+                      onAddToCart(p);
+                    }}
+                    onToggleWishlist={(p) => {
+                      onToggleWishlist(p);
+                    }}
                     isWishlisted={isWishlisted}
                   />
                 </div>

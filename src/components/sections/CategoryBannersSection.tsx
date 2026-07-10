@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { categories } from '../../data/categories';
 import { CategoryCard } from '../ui/CategoryCard';
 
@@ -9,8 +8,6 @@ import menImage from '../../assets/men.jpg';
 import womenImage from '../../assets/women.jpg';
 
 export const CategoryBannersSection: React.FC = () => {
-  const navigate = useNavigate();
-
   // Map the local files to their category IDs
   const localImageMap: { [key: string]: string } = {
     'men': menImage,
@@ -24,7 +21,6 @@ export const CategoryBannersSection: React.FC = () => {
           <div
             key={cat.id}
             className="cursor-pointer"
-            onClick={() => navigate(`/category/${cat.id}`)}
           >
             <CategoryCard
               name={cat.name}
