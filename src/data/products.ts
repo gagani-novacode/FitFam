@@ -5,6 +5,7 @@ export interface Product {
   price: number;
   originalPrice?: number;
   image: string;
+  images?: string[];
   isNew?: boolean;
   isSale?: boolean;
   badge?: string;

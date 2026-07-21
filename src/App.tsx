@@ -10,9 +10,11 @@ import { WishlistPage } from './pages/WishlistPage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { AccountPage } from './pages/AccountPage';
+import { OrderSuccessPage } from './pages/OrderSuccessPage';
+import { MockPaymentPage } from './pages/MockPaymentPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { Product } from './data/products';
-import { api } from './lib/api';
+import { api, fixImageUrl } from './lib/api';
 import { Check, X, CreditCard, ShoppingBag, Landmark, Sparkles, Heart } from 'lucide-react';
 
 interface CartItem {
@@ -30,7 +32,7 @@ interface ToastMessage {
 // ─── Inner app (needs to be inside BrowserRouter to use hooks) ─────────────
 function AppInner() {
   const navigate = useNavigate();
-  
+
   // Persistence cache — ALL UNCHANGED from your original
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     const cached = localStorage.getItem('fitfam_cart');
@@ -53,10 +55,12 @@ function AppInner() {
     const fetchProducts = async () => {
       try {
         const res = await api.get('/store/products');
+        // In App.tsx, update the fetchProducts mapping
         const mapped = res.data.products.map((p: any) => ({
           ...p,
           id: p._id,
-          image: p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/600'
+          image: fixImageUrl(p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/600'),
+          images: (p.images || []).map(fixImageUrl),
         }));
         setProducts(mapped);
       } catch (err) {
@@ -218,6 +222,20 @@ function AppInner() {
             }
           />
 
+          {/* Subcategory page */}
+          <Route
+            path="/category/:categoryId/:subCategory"
+            element={
+              <CategoryPage
+                products={products}
+                isLoading={isLoadingProducts}
+                onAddToCart={handleAddToCart}
+                onToggleWishlist={handleToggleWishlist}
+                wishlistItems={wishlistItems}
+              />
+            }
+          />
+
           {/* All-products shop page */}
           <Route
             path="/shop"
@@ -233,12 +251,12 @@ function AppInner() {
           />
 
           {/* ── INFO / LEGAL PAGES (footer links) ─────────────────────── */}
-          <Route path="/about"    element={<AboutPage />} />
-          <Route path="/faq"      element={<FaqPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/faq" element={<FaqPage />} />
           <Route path="/shipping" element={<ShippingReturnsPage />} />
-          <Route path="/contact"  element={<ContactPage />} />
-          <Route path="/terms"    element={<TermsPage />} />
-          <Route path="/privacy"  element={<PrivacyPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
 
           {/* ── PERSONAL PAGES ───────────────────────────────── */}
           <Route
@@ -263,6 +281,12 @@ function AppInner() {
             }
           />
           <Route path="/checkout" element={<CheckoutPage cartItems={cartItems} onClearCart={() => setCartItems([])} />} />
+
+          {/* ── ORDER SUCCESS / RETURN FROM PAYMENT ───────────── */}
+          <Route path="/order-success" element={<OrderSuccessPage />} />
+
+          {/* ── MOCK PAYMENT (local dev — bypasses PayHere domain whitelist) ── 
+          <Route path="/mock-payment" element={<MockPaymentPage />} />*/}
 
           {/* ── ACCOUNT PAGE ──────────────────────────────────── */}
           <Route path="/account" element={<AccountPage />} />

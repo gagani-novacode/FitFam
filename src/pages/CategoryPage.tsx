@@ -35,13 +35,13 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
   onToggleWishlist,
   wishlistItems,
 }) => {
-  const { categoryId } = useParams<{ categoryId: string }>();
+  const { categoryId, subCategory } = useParams<{ categoryId: string; subCategory?: string }>();
   const navigate = useNavigate();
 
   // Scroll to top on mount / category change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [categoryId]);
+  }, [categoryId, subCategory]);
 
   const key = (categoryId ?? '').toLowerCase() as CategoryKey;
   const meta = categoryMeta[key];
@@ -62,7 +62,22 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
     );
   }
 
-  const categoryProducts = products.filter((p) => p.category === meta.productKey);
+  const decodedSubCategory = subCategory ? decodeURIComponent(subCategory) : null;
+
+  // Filter products:
+  // - Always filter by category (Men/Women/Accessories)
+  // - Also filter by subCategory if one is present in the URL
+  const categoryProducts = products.filter((p) => {
+    const matchesCategory = p.category === meta.productKey;
+
+    const matchesSubCategory = !decodedSubCategory ||
+      (p as any).subCategory?.toLowerCase() === decodedSubCategory.toLowerCase();
+
+    return matchesCategory && matchesSubCategory;
+  });
+
+  // Page title — show subCategory name if filtering by one, otherwise show category name
+  const pageTitle = decodedSubCategory ? decodedSubCategory : meta.label;
 
   return (
     <div className="min-h-screen bg-white">
@@ -77,7 +92,21 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
             Home
           </button>
           <ChevronRight className="w-3 h-3 text-gray-400" />
-          <span className="text-gray-800 font-medium">{meta.label}</span>
+          {/* If there's a subCategory, make the category name clickable to go back */}
+          {decodedSubCategory ? (
+            <>
+              <button
+                onClick={() => navigate(`/category/${categoryId}`)}
+                className="hover:text-black transition-colors cursor-pointer"
+              >
+                {meta.label}
+              </button>
+              <ChevronRight className="w-3 h-3 text-gray-400" />
+              <span className="text-gray-800 font-medium">{decodedSubCategory}</span>
+            </>
+          ) : (
+            <span className="text-gray-800 font-medium">{meta.label}</span>
+          )}
         </nav>
       </div>
 
@@ -86,6 +115,9 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
         <h1 className="text-3xl sm:text-4xl font-semibold text-gray-900 tracking-wide">
           {meta.label}
         </h1>
+        {decodedSubCategory && (
+          <p className="text-sm text-gray-400 mt-1">{meta.label} Collection</p>
+        )}
       </div>
 
       {/* ── PRODUCTS GRID ───────────────────────────────────────────────── */}
@@ -106,13 +138,16 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
               No items yet
             </h2>
             <p className="text-sm text-gray-400 max-w-xs">
-              We're stocking up this collection. Check back soon for new arrivals.
+              {decodedSubCategory
+                ? `No ${decodedSubCategory} products found. Check back soon!`
+                : "We're stocking up this collection. Check back soon for new arrivals."
+              }
             </p>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate(`/category/${categoryId}`)}
               className="mt-2 bg-black text-white px-8 py-3 text-[11px] font-extrabold uppercase tracking-widest hover:bg-gray-900 transition-colors cursor-pointer"
             >
-              Explore Other Categories
+              {decodedSubCategory ? `View All ${meta.label}` : 'Explore Other Categories'}
             </button>
           </div>
         ) : (

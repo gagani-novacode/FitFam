@@ -134,11 +134,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
               </button>
               <div className="absolute top-full left-1/2 -translate-x-1/2 w-48 bg-white border border-gray-100 shadow-lg py-2 hidden group-hover:block z-50">
-                <Link to="/category/women" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Oversize</Link>
-                <Link to="/category/women" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Crop Tops</Link>
-                <Link to="/category/women" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Shorts</Link>
-                <Link to="/category/women" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Leggings</Link>
-                <Link to="/category/women" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Tops & Short Set</Link>
+                <Link to="/category/women" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">All Women</Link>
+                <Link to="/category/women/Oversize" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Oversize</Link>
+                <Link to="/category/women/Crop%20Tops" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Crop Tops</Link>
+                <Link to="/category/women/Shorts" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Shorts</Link>
+                <Link to="/category/women/Leggings" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Leggings</Link>
+                <Link to="/category/women/Tops%20%26%20Short%20Set" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Tops & Short Set</Link>
               </div>
             </div>
 
@@ -162,13 +163,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <Link to="/category/men" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">CAMO Squat Short</Link>
                   </div>
                 </div>
-                <Link to="/category/men" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">UNMARKED</Link>
-                <Link to="/category/men" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Oversize</Link>
-                <Link to="/category/men" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Stringers</Link>
-                <Link to="/category/men" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Short</Link>
-                <Link to="/category/men" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">DRY &mdash; FIT T Shirt</Link>
-                <Link to="/category/men" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Pants</Link>
-                <Link to="/category/men" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Tank Tops</Link>
+                <Link to="/category/men" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">All Men</Link>
+                <Link to="/category/men/CAMO%20Dry-Fit%20Tees" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">CAMO Dry-Fit Tees</Link>
+                <Link to="/category/men/CAMO%20Premium%20Shorts" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">CAMO Premium Shorts</Link>
+                <Link to="/category/men/CAMO%20Squat%20Short" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">CAMO Squat Short</Link>
+                <Link to="/category/men/UNMARKED" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">UNMARKED</Link>
+                <Link to="/category/men/Oversize" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Oversize</Link>
+                <Link to="/category/men/Stringers" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Stringers</Link>
+                <Link to="/category/men/Short" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Short</Link>
+                <Link to="/category/men/DRY-FIT%20T%20Shirt" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">DRY — FIT T Shirt</Link>
+                <Link to="/category/men/Pants" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Pants</Link>
+                <Link to="/category/men/Tank%20Tops" className="block px-4 py-2 text-xs font-semibold uppercase text-gray-700 hover:bg-gray-50 hover:text-[#D4AF37] transition-colors">Tank Tops</Link>
               </div>
             </div>
 

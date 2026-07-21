@@ -2,6 +2,7 @@ import React from 'react';
 import { Star, ShoppingBag, Heart, Eye } from 'lucide-react';
 import { Product } from '../../data/products';
 import { Badge } from './Badge';
+import { fixImageUrl } from '../../lib/api';
 
 interface ProductCardProps {
   product: Product;
@@ -35,7 +36,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       {/* 1. IMAGE CONTAINER — square by default, tall portrait on category pages */}
       <div className={`relative w-full overflow-hidden bg-gray-50 flex items-center justify-center ${portrait ? 'aspect-[3/4]' : 'aspect-square'}`}>
         <img
-          src={image}
+          src={fixImageUrl(image)}
           alt={name}
           className="w-full h-full object-cover transition-transform duration-500" // REMOVED: group-hover:scale-105[cite: 2]
           loading="lazy"
