@@ -84,6 +84,13 @@ function AppInner() {
     localStorage.setItem('fitfam_wishlist', JSON.stringify(wishlistItems));
   }, [wishlistItems]);
 
+  // Add this:
+  useEffect(() => {
+    const handler = () => setCartItems([]);
+    window.addEventListener('fitfam:clear-cart', handler);
+    return () => window.removeEventListener('fitfam:clear-cart', handler);
+  }, []);
+
   // Toast helper — UNCHANGED
   const showToast = (text: string, type: 'cart' | 'wishlist' | 'success') => {
     const id = Date.now().toString();
@@ -285,8 +292,8 @@ function AppInner() {
           {/* ── ORDER SUCCESS / RETURN FROM PAYMENT ───────────── */}
           <Route path="/order-success" element={<OrderSuccessPage />} />
 
-          {/* ── MOCK PAYMENT (local dev — bypasses PayHere domain whitelist) ── 
-          <Route path="/mock-payment" element={<MockPaymentPage />} />*/}
+          {/* ── MOCK PAYMENT (local dev — bypasses PayHere domain whitelist) ── */}
+          <Route path="/mock-payment" element={<MockPaymentPage />} />
 
           {/* ── ACCOUNT PAGE ──────────────────────────────────── */}
           <Route path="/account" element={<AccountPage />} />

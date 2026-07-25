@@ -15,7 +15,17 @@ export const OrderSuccessPage: React.FC = () => {
   const MAX_ATTEMPTS = 15; // 15 × 2s = 30s timeout
 
   useEffect(() => {
+    // With this block:
+    const paymentMethod = localStorage.getItem('fitfam_payment_method');
     const ref = localStorage.getItem('fitfam_pending_orderRef');
+
+    if (paymentMethod === 'koko_mock') {
+      localStorage.removeItem('fitfam_payment_method');
+      localStorage.removeItem('fitfam_pending_orderRef');
+      setOrderRef(ref);
+      setStatus('PAID');
+      return; // skip polling entirely
+    }
     if (!ref) {
       // No pending order — redirect home
       navigate('/');
@@ -43,8 +53,16 @@ export const OrderSuccessPage: React.FC = () => {
           setStatus(s as OrderStatus);
 
           if (s === 'PAID') {
-            // Clean up the pending ref only on confirmed payment
+            clearInterval(intervalRef.current!);
+            setOrderData(res.data.order);
+            setStatus(s as OrderStatus);
             localStorage.removeItem('fitfam_pending_orderRef');
+
+            // Add this:
+            if (localStorage.getItem('fitfam_clear_cart_on_success')) {
+              localStorage.removeItem('fitfam_clear_cart_on_success');
+              window.dispatchEvent(new Event('fitfam:clear-cart'));
+            }
           }
         }
       } catch (err) {
@@ -230,15 +248,14 @@ export const OrderSuccessPage: React.FC = () => {
         </div>
         <h1 className="text-xl font-bold text-gray-900 mb-2">Confirming your payment…</h1>
         <p className="text-sm text-gray-500">
-          Please wait while we verify your payment with PayHere. This usually takes just a few seconds.
+          Please wait while we verify your payment. This usually takes just a few seconds.
         </p>
         <div className="mt-6 flex justify-center gap-1.5">
           {Array.from({ length: MAX_ATTEMPTS }).map((_, i) => (
             <div
               key={i}
-              className={`h-1 rounded-full transition-all duration-300 ${
-                i < attemptRef.current ? 'bg-gray-800 w-3' : 'bg-gray-200 w-3'
-              }`}
+              className={`h-1 rounded-full transition-all duration-300 ${i < attemptRef.current ? 'bg-gray-800 w-3' : 'bg-gray-200 w-3'
+                }`}
             />
           ))}
         </div>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronRight, Loader2, AlertCircle } from 'lucide-react';
 import { Product } from '../data/products';
 import { api } from '../lib/api';
+import { KokoMockModal } from './KokoMockModal';
 
 interface CartItem {
   product: Product;
@@ -38,18 +39,14 @@ function submitPayHereForm(payment: Record<string, string>) {
   form.submit();
 }
 
-// ── Koko: load SDK and trigger widget ────────────────────────────────────
+// ── Koko: load SDK and trigger widget (real credentials) ──────────────────
 function submitKokoPayment(payment: Record<string, string>): Promise<void> {
   return new Promise((resolve, reject) => {
-    const KOKO_SDK_URL = 'https://qaapi.paykoko.com/assets/js/koko.js'; // sandbox SDK
+    const KOKO_SDK_URL = 'https://qaapi.paykoko.com/assets/js/koko.js';
 
-    // Load Koko JS SDK if not already loaded
     const loadSdk = (): Promise<void> => {
       return new Promise((res, rej) => {
-        if ((window as any).KOKO) {
-          res();
-          return;
-        }
+        if ((window as any).KOKO) { res(); return; }
         const existing = document.querySelector(`script[src="${KOKO_SDK_URL}"]`);
         if (existing) {
           existing.addEventListener('load', () => res());
@@ -65,39 +62,32 @@ function submitKokoPayment(payment: Record<string, string>): Promise<void> {
       });
     };
 
-    loadSdk()
-      .then(() => {
-        const koko = (window as any).KOKO;
-        if (!koko) {
-          reject(new Error('Koko SDK not available'));
-          return;
-        }
-
-        // Trigger the Koko payment widget
-        koko.pay({
-          _mId: payment._mId,
-          api_key: payment.api_key,
-          _returnUrl: payment._returnUrl,
-          _cancelUrl: payment._cancelUrl,
-          _responseUrl: payment._responseUrl,
-          _amount: payment._amount,
-          _currency: payment._currency,
-          _reference: payment._reference,
-          _orderId: payment._orderId,
-          _pluginName: payment._pluginName,
-          _pluginVersion: payment._pluginVersion,
-          _description: payment._description,
-          _firstName: payment._firstName,
-          _lastName: payment._lastName,
-          _email: payment._email,
-          dataString: payment.dataString,
-          signature: payment.signature,
-          onSuccess: () => resolve(),
-          onError: (err: any) => reject(new Error(err?.message || 'Koko payment failed')),
-          onCancel: () => reject(new Error('Koko payment was cancelled')),
-        });
-      })
-      .catch(reject);
+    loadSdk().then(() => {
+      const koko = (window as any).KOKO;
+      if (!koko) { reject(new Error('Koko SDK not available')); return; }
+      koko.pay({
+        _mId: payment._mId,
+        api_key: payment.api_key,
+        _returnUrl: payment._returnUrl,
+        _cancelUrl: payment._cancelUrl,
+        _responseUrl: payment._responseUrl,
+        _amount: payment._amount,
+        _currency: payment._currency,
+        _reference: payment._reference,
+        _orderId: payment._orderId,
+        _pluginName: payment._pluginName,
+        _pluginVersion: payment._pluginVersion,
+        _description: payment._description,
+        _firstName: payment._firstName,
+        _lastName: payment._lastName,
+        _email: payment._email,
+        dataString: payment.dataString,
+        signature: payment.signature,
+        onSuccess: () => resolve(),
+        onError: (err: any) => reject(new Error(err?.message || 'Koko payment failed')),
+        onCancel: () => reject(new Error('Koko payment was cancelled')),
+      });
+    }).catch(reject);
   });
 }
 
@@ -107,6 +97,12 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
+    localStorage.removeItem('fitfam_clear_cart_on_success');
+    const pendingRef = localStorage.getItem('fitfam_pending_orderRef');
+    if (pendingRef) {
+      setReturnedFromPayHere(true);
+      localStorage.removeItem('fitfam_pending_orderRef');
+    }
   }, []);
 
   const [billingDetails, setBillingDetails] = useState({
@@ -125,14 +121,21 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
   const [paymentMethod, setPaymentMethod] = useState<'payhere' | 'koko'>('payhere');
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showKokoMock, setShowKokoMock] = useState(false);
+  const [pendingOrderRef, setPendingOrderRef] = useState<string | null>(null);
+  const [snapshotItems, setSnapshotItems] = useState<CartItem[]>([]);
+  const [returnedFromPayHere, setReturnedFromPayHere] = useState(false);
 
-  const cartSubtotal = cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+  const displayItems = snapshotItems.length > 0 ? snapshotItems : cartItems;
+  const cartSubtotal = displayItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
   const deliveryFee = 500;
   const orderTotal = cartSubtotal + deliveryFee;
+
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+    setSnapshotItems(cartItems);
 
     if (!billingDetails.firstName || !billingDetails.lastName || !billingDetails.address || !billingDetails.phone || !billingDetails.email) {
       setErrorMessage('Please fill in all mandatory billing details.');
@@ -146,11 +149,11 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
     setIsProcessing(true);
 
     try {
-      // ── Step 1: Create cart session ────────────────────────────────────
+      // ── Step 1: Create cart session ──────────────────────────────────
       const cartRes = await api.get('/store/cart');
       const { orderRef } = cartRes.data.cart;
 
-      // ── Step 2: Add items to backend cart ──────────────────────────────
+      // ── Step 2: Add items to backend cart ────────────────────────────
       for (const item of cartItems) {
         await api.post('/store/cart/add', {
           orderRef,
@@ -160,7 +163,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
         });
       }
 
-      // ── Step 3: Move to CHECKOUT (reserves inventory) ──────────────────
+      // ── Step 3: Move to CHECKOUT (reserves inventory) ────────────────
       const checkoutRes = await api.post('/store/checkout', {
         orderRef,
         customer: {
@@ -180,25 +183,20 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
       }
 
       localStorage.setItem('fitfam_pending_orderRef', orderRef);
-      if (onClearCart) onClearCart();
 
-      // ── Step 4: Payment ────────────────────────────────────────────────
+      // ── Step 4: Payment ──────────────────────────────────────────────
       if (paymentMethod === 'payhere') {
         const payRes = await api.post('/payhere/store/checkout', { orderRef });
         if (!payRes.data.ok) {
           throw new Error(payRes.data.error || 'Could not initialize PayHere payment.');
         }
+        localStorage.setItem('fitfam_clear_cart_on_success', '1');
         submitPayHereForm(payRes.data.payment);
 
       } else if (paymentMethod === 'koko') {
-        const kokoRes = await api.post('/koko/store/checkout', { orderRef });
-        if (!kokoRes.data.ok) {
-          throw new Error(kokoRes.data.error || 'Could not initialize Koko payment.');
-        }
-        // This opens the Koko widget — awaiting success/cancel/error callbacks
-        await submitKokoPayment(kokoRes.data.payment);
-        // If we reach here, Koko reported success — navigate to order success
-        navigate('/order-success');
+        setPendingOrderRef(orderRef);
+        setIsProcessing(false);       // stop the spinner — modal takes over
+        setShowKokoMock(true);        // open mock Koko modal
       }
 
     } catch (err: any) {
@@ -322,7 +320,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
                 <span className="font-bold text-[13px] text-gray-900">Subtotal</span>
               </div>
               <div className="p-4 border-b border-gray-200 space-y-3">
-                {cartItems.map((item, idx) => (
+                {(snapshotItems.length > 0 ? snapshotItems : cartItems).map((item, idx) => (
                   <div key={idx} className="flex justify-between items-center text-[13px] text-gray-600">
                     <span className="pr-4">{item.product.name} - {item.size} × {item.quantity}</span>
                     <span className="font-medium whitespace-nowrap">රු{(item.product.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
@@ -381,7 +379,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
                   )}
                 </label>
 
-                {/* Koko */}
+                {/* Koko — always selectable, mock page shown when no credentials */}
                 <label className="block p-4 cursor-pointer hover:bg-gray-50 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -396,14 +394,13 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
                         Paykoko <span className="text-indigo-600 font-black text-sm tracking-tighter">KOKO</span>
                       </span>
                     </div>
-                    {/* Koko installment badge */}
                     <div className="text-[9px] bg-indigo-50 text-indigo-600 border border-indigo-100 px-2 py-1 rounded-full font-bold uppercase tracking-wider">
                       3 × රු{(orderTotal / 3).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </div>
                   </div>
                   {paymentMethod === 'koko' && (
                     <div className="pl-6 text-[12px] text-gray-500 leading-relaxed mt-3">
-                      Pay in 3 interest-free installments via Koko. You will be redirected to the Koko payment page to complete your purchase.
+                      Pay in 3 interest-free installments via Koko. You will be redirected to complete your purchase.
                     </div>
                   )}
                 </label>
@@ -419,7 +416,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
 
             <button
               type="submit"
-              disabled={isProcessing || cartItems.length === 0}
+              disabled={isProcessing || (cartItems.length === 0 && snapshotItems.length === 0)}
               className="w-full bg-[#c0392b] hover:bg-[#a93226] disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-3.5 text-sm font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2"
             >
               {isProcessing ? (
@@ -441,6 +438,22 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
             )}
           </div>
         </form>
+        {showKokoMock && (
+          <KokoMockModal
+            orderRef={pendingOrderRef!}
+            total={orderTotal}
+            onConfirm={() => {
+              setShowKokoMock(false);
+              if (onClearCart) onClearCart();
+              localStorage.setItem('fitfam_payment_method', 'koko_mock'); // add this
+              navigate('/order-success');
+            }}
+            onCancel={() => {
+              setShowKokoMock(false);
+              setIsProcessing(false);
+            }}
+          />
+        )}
       </div>
     </div>
   );
