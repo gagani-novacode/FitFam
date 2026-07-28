@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, Share2, ShoppingBag, X, Ruler } from 'lucide-react';
+import { ChevronRight, Share2, ShoppingBag, X, Ruler, Plus, Minus } from 'lucide-react';
 import { Product } from '../data/products';
 import { ProductCard } from '../components/ui/ProductCard';
 import { Footer } from '../components/layout/Footer';
@@ -64,32 +64,16 @@ const SIZE_CHARTS = {
     },
 };
 
-// ── Determine which chart to show based on subCategory ───────────────────
 function getChartType(subCategory?: string): keyof typeof SIZE_CHARTS | null {
-    if (!subCategory) return 'tops'; // default
+    if (!subCategory) return 'tops';
     const sc = subCategory.toLowerCase();
-
     if (sc.includes('legging')) return 'leggings';
     if (sc.includes('tops & short set') || sc.includes('short set')) return 'topsset';
-    if (
-        sc.includes('short') ||
-        sc.includes('pant') ||
-        sc.includes('squat') ||
-        sc.includes('bottom')
-    ) return 'bottoms';
-    if (
-        sc.includes('tee') ||
-        sc.includes('tank') ||
-        sc.includes('stringer') ||
-        sc.includes('oversize') ||
-        sc.includes('oversized') ||
-        sc.includes('dry-fit') ||
-        sc.includes('dry fit') ||
-        sc.includes('crop') ||
-        sc.includes('top')
-    ) return 'tops';
-
-    return 'tops'; // fallback
+    if (sc.includes('short') || sc.includes('pant') || sc.includes('squat') || sc.includes('bottom')) return 'bottoms';
+    if (sc.includes('tee') || sc.includes('tank') || sc.includes('stringer') || sc.includes('oversize') ||
+        sc.includes('oversized') || sc.includes('dry-fit') || sc.includes('dry fit') ||
+        sc.includes('crop') || sc.includes('top')) return 'tops';
+    return 'tops';
 }
 
 // ── Size Chart Modal ──────────────────────────────────────────────────────
@@ -104,52 +88,36 @@ function SizeChartModal({
 }) {
     const chartType = getChartType(subCategory);
     const chart = chartType ? SIZE_CHARTS[chartType] : null;
-
     if (!isOpen || !chart) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <div
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                onClick={onClose}
-            />
-
-            {/* Modal */}
-            <div className="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
-
-                {/* Header */}
-                <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-                            <Ruler className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                            <h3 className="text-sm font-extrabold uppercase tracking-widest text-gray-900">
-                                Size Chart
-                            </h3>
-                            <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-0.5">
-                                {chart.title}
-                            </p>
-                        </div>
+            <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+            <div className="relative bg-white w-full max-w-lg shadow-2xl overflow-hidden">
+                <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+                    <div>
+                        <h3 className="font-chakra font-normal text-[11px] uppercase tracking-[0.3em] text-[#111111]">
+                            Size Chart
+                        </h3>
+                        <p className="font-chakra font-normal text-[10px] uppercase tracking-[0.2em] text-gray-400 mt-0.5">
+                            {chart.title}
+                        </p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-1.5 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                        className="border border-gray-200 hover:border-[#111111] p-1.5 transition-colors duration-200 cursor-pointer"
                     >
-                        <X className="w-5 h-5 text-gray-500" />
+                        <X className="w-4 h-4 text-gray-500" />
                     </button>
                 </div>
-
-                {/* Table */}
                 <div className="px-6 py-5 overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
-                            <tr className="bg-black text-white">
+                            <tr className="bg-[#111111] text-white">
                                 {chart.columns.map((col, i) => (
                                     <th
                                         key={col}
-                                        className={`py-3 px-4 text-[10px] font-bold uppercase tracking-widest ${i === 0 ? 'text-left' : 'text-center'}`}
+                                        className={`py-3 px-4 font-chakra font-normal text-[9px] uppercase tracking-[0.3em] ${i === 0 ? 'text-left' : 'text-center'}`}
                                     >
                                         {col}
                                     </th>
@@ -158,16 +126,13 @@ function SizeChartModal({
                         </thead>
                         <tbody>
                             {chart.rows.map((row, rowIdx) => (
-                                <tr
-                                    key={rowIdx}
-                                    className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-                                >
+                                <tr key={rowIdx} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                     {row.map((cell, colIdx) => (
                                         <td
                                             key={colIdx}
-                                            className={`py-3 px-4 text-sm ${colIdx === 0
-                                                ? 'font-extrabold text-gray-900 text-left uppercase tracking-wider'
-                                                : 'text-center text-gray-600 font-medium'
+                                            className={`py-3 px-4 font-chakra font-normal ${colIdx === 0
+                                                ? 'text-[11px] uppercase tracking-[0.25em] text-[#111111] text-left'
+                                                : 'text-center text-sm text-gray-500'
                                                 }`}
                                         >
                                             {cell}
@@ -199,7 +164,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     const [activeTab, setActiveTab] = useState<Tab>('description');
     const [qty, setQty] = useState(1);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
-    const [isSizeChartOpen, setIsSizeChartOpen] = useState(false); // ← new
+    const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -209,11 +174,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     if (!product) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-4">
-                <h1 className="text-2xl font-bold text-gray-900">Product not found</h1>
-                <p className="text-sm text-gray-500">The product you're looking for doesn't exist.</p>
+                <h1 className="font-chakra font-normal text-[#111111] text-2xl uppercase tracking-[0.3em]">
+                    Product Not Found
+                </h1>
+                <p className="font-chakra font-normal text-sm text-gray-400 tracking-wide">
+                    The product you're looking for doesn't exist.
+                </p>
                 <button
                     onClick={() => navigate('/')}
-                    className="mt-4 bg-black text-white px-6 py-3 text-xs uppercase font-extrabold tracking-widest hover:bg-gray-900 cursor-pointer"
+                    className="mt-4 border border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white font-chakra font-normal text-[10px] uppercase tracking-[0.3em] px-8 py-3 transition-all duration-300 cursor-pointer"
                 >
                     Back to Home
                 </button>
@@ -230,12 +199,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         ? product.images
         : [product.image];
 
-    const goToPrev = () =>
-        setActiveImageIndex((i) => (i === 0 ? allImages.length - 1 : i - 1));
-
-    const goToNext = () =>
-        setActiveImageIndex((i) => (i === allImages.length - 1 ? 0 : i + 1));
-
     return (
         <div className="min-h-screen bg-white">
 
@@ -248,29 +211,53 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
             {/* Breadcrumb */}
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <ol className="flex items-center gap-1 text-xs text-gray-500 flex-wrap">
+                <ol className="flex items-center gap-1.5 font-chakra font-normal text-[11px] uppercase tracking-[0.2em] text-gray-400 flex-wrap">
                     <li>
-                        <button onClick={() => navigate('/')} className="hover:text-gray-900 transition-colors cursor-pointer">
+                        <button onClick={() => navigate('/')} className="hover:text-[#111111] transition-colors cursor-pointer">
                             Home
                         </button>
                     </li>
-                    <li className="flex items-center gap-1">
+                    <li className="flex items-center gap-1.5">
                         <ChevronRight className="w-3 h-3 text-gray-300" />
                         <span>{product.category}</span>
                     </li>
-                    <li className="flex items-center gap-1">
+                    <li className="flex items-center gap-1.5">
                         <ChevronRight className="w-3 h-3 text-gray-300" />
-                        <span className="text-gray-900 truncate max-w-[200px]">{product.name}</span>
+                        <span className="text-[#111111] truncate max-w-[200px]">{product.name}</span>
                     </li>
                 </ol>
             </nav>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-                    {/* ── Left: Image Carousel ─────────────────────── */}
-                    <div className="flex flex-col gap-3">
-                        <div className="relative aspect-[3/4] bg-gray-100 overflow-hidden">
+                    {/* ── Left Image Gallery Section (Vertical Thumbnails + Main Image) ─────────────────────── */}
+                    <div className="lg:col-span-7 flex flex-col-reverse md:flex-row gap-4">
+
+                        {/* Vertical Thumbnails List */}
+                        {allImages.length > 1 && (
+                            <div className="flex md:flex-col gap-2.5 overflow-x-auto md:overflow-y-auto max-h-[600px] scrollbar-thin scrollbar-thumb-gray-200">
+                                {allImages.map((img, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setActiveImageIndex(i)}
+                                        className={`relative flex-shrink-0 w-16 h-20 md:w-20 md:h-24 bg-gray-50 border transition-all cursor-pointer overflow-hidden ${i === activeImageIndex
+                                            ? 'border-black ring-1 ring-black'
+                                            : 'border-gray-200 hover:border-gray-400 opacity-70 hover:opacity-100'
+                                            }`}
+                                    >
+                                        <img
+                                            src={img}
+                                            alt={`Thumbnail ${i + 1}`}
+                                            className="w-full h-full object-cover object-center"
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Main Product Image Container */}
+                        <div className="relative flex-1 aspect-[3/4] bg-[#f8f8f8] overflow-hidden">
                             <img
                                 key={activeImageIndex}
                                 src={allImages[activeImageIndex]}
@@ -278,100 +265,67 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                                 className="w-full h-full object-cover object-center transition-opacity duration-300"
                             />
                             {product.badge && (
-                                <span className="absolute top-4 left-4 bg-black text-white text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1">
+                                <span className="absolute top-4 left-4 bg-[#111111] text-white font-chakra font-normal text-[9px] uppercase tracking-[0.3em] px-2.5 py-1">
                                     {product.badge}
                                 </span>
                             )}
-                            {allImages.length > 1 && (
-                                <>
-                                    <button onClick={goToPrev} className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md transition-all cursor-pointer z-10">
-                                        <ChevronLeft className="w-5 h-5" />
-                                    </button>
-                                    <button onClick={goToNext} className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md transition-all cursor-pointer z-10">
-                                        <ChevronRight className="w-5 h-5" />
-                                    </button>
-                                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                                        {allImages.map((_, i) => (
-                                            <button
-                                                key={i}
-                                                onClick={() => setActiveImageIndex(i)}
-                                                className={`w-1.5 h-1.5 rounded-full transition-all cursor-pointer ${i === activeImageIndex ? 'bg-black w-4' : 'bg-black/30'}`}
-                                            />
-                                        ))}
-                                    </div>
-                                </>
-                            )}
                         </div>
-
-                        {allImages.length > 1 && (
-                            <div className="flex gap-2 overflow-x-auto pb-1">
-                                {allImages.map((img, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => setActiveImageIndex(i)}
-                                        className={`flex-shrink-0 w-16 h-20 border-2 overflow-hidden transition-all cursor-pointer ${i === activeImageIndex ? 'border-black' : 'border-transparent opacity-50 hover:opacity-100'}`}
-                                    >
-                                        <img src={img} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
-                                    </button>
-                                ))}
-                            </div>
-                        )}
                     </div>
 
-                    {/* ── Right: Details ───────────────────────── */}
-                    <div className="flex flex-col gap-5 pt-2">
+                    {/* ── Right Details Section ───────────────────────── */}
+                    <div className="lg:col-span-5 flex flex-col gap-6 pt-2">
 
-                        <p className="text-xs text-gray-500 uppercase tracking-widest">{product.category}</p>
+                        <div>
 
-                        <h1 className="text-2xl sm:text-3xl font-semibold text-gray-950 leading-snug">
-                            {product.name}
-                        </h1>
+                            {/* Product Title */}
+                            <h1 className="font-chakra font-semibold text-[#111111] text-xl sm:text-2xl uppercase tracking-wider leading-snug">
+                                {product.name}
+                            </h1>
 
+                            {/* Color Label */}
+                            <p className="font-chakra text-[11px] uppercase tracking-widest text-gray-500 mt-1">
+                                BLACK
+                            </p>
+                        </div>
+
+                        {/* Price */}
                         <div className="flex items-baseline gap-3">
-                            <span className="text-2xl font-bold text-gray-900">
-                                LK {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                            <span className="font-chakra text-lg text-[#111111]">
+                                Rs {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })} LKR
                             </span>
                             {product.originalPrice && (
-                                <span className="text-base text-gray-400 line-through">
-                                    LK {product.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                <span className="font-chakra text-sm text-gray-400 line-through">
+                                    Rs {product.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })} LKR
                                 </span>
                             )}
                         </div>
 
-                        <p className="text-xs text-gray-500">
-                            or 3 ×{' '}
-                            <span className="font-semibold text-gray-700">
-                                LK {Math.ceil(product.price / 3).toLocaleString()}
-                            </span>{' '}
-                            with <span className="font-semibold text-indigo-600">Koko</span>
-                            {product.price >= 20000 && (
-                                <span className="ml-2 text-green-600 font-semibold">✓ Free Shipping</span>
-                            )}
-                        </p>
-
-                        <div className="border-t border-gray-100" />
-
-                        {/* Size selector */}
-                        <div>
-                            <div className="flex items-center justify-between mb-2">
-                                <p className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Size</p>
-                                {/* ← Size Chart button now opens modal */}
+                        {/* Size Selection */}
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <span className="font-chakra text-[11px] uppercase tracking-widest text-gray-500">
+                                    Size:
+                                </span>
                                 <button
                                     onClick={() => setIsSizeChartOpen(true)}
-                                    className="text-xs text-gray-400 underline hover:text-gray-700 cursor-pointer transition-colors flex items-center gap-1"
+                                    className="font-chakra text-[10px] uppercase tracking-widest text-gray-400 hover:text-[#111111] cursor-pointer transition-colors flex items-center gap-1"
                                 >
                                     <Ruler className="w-3 h-3" />
-                                    Size Chart
+                                    Size Guide
                                 </button>
                             </div>
-                            <div className="flex gap-2 flex-wrap">
-                                {(product.sizes && product.sizes.length > 0 ? product.sizes : ['XS', 'S', 'M', 'L', 'XL', 'XXL']).map((size) => (
+
+                            <div className="grid grid-cols-5 gap-2">
+                                {(product.sizes && product.sizes.length > 0
+                                    ? product.sizes
+                                    : ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+                                ).map((size) => (
                                     <button
                                         key={size}
                                         onClick={() => setSelectedSize(size)}
-                                        className={`min-w-[44px] h-10 px-3 border text-sm font-medium transition-all cursor-pointer ${selectedSize === size
-                                            ? 'bg-gray-900 text-white border-gray-900'
-                                            : 'bg-white text-gray-700 border-gray-300 hover:border-gray-900'
+                                        className={`h-11 border font-chakra text-[11px] uppercase tracking-wider transition-all duration-200 cursor-pointer ${selectedSize === size
+                                            ? 'bg-white text-[#111111] border-[#111111] font-semibold ring-1 ring-[#111111]'
+                                            : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
                                             }`}
                                     >
                                         {size}
@@ -380,144 +334,78 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                             </div>
                         </div>
 
-                        {/* Qty + Add to Cart */}
-                        <div className="flex items-center gap-3 pt-1">
-                            <div className="flex items-center border border-gray-300 h-12">
-                                <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="px-3 h-full text-lg text-gray-600 hover:bg-gray-100 cursor-pointer select-none">−</button>
-                                <span className="px-4 text-sm font-medium min-w-[36px] text-center">{qty}</span>
-                                <button onClick={() => setQty((q) => q + 1)} className="px-3 h-full text-lg text-gray-600 hover:bg-gray-100 cursor-pointer select-none">+</button>
-                            </div>
+                        {/* Action Buttons */}
+                        <div className="flex flex-col gap-3 pt-2">
                             <button
-                                onClick={() => { for (let i = 0; i < qty; i++) onAddToCart(product, selectedSize); }}
-                                className="flex-1 h-12 bg-[#111111] text-white text-xs font-extrabold tracking-widest uppercase hover:bg-gray-800 transition-colors cursor-pointer flex items-center justify-center gap-2"
+                                onClick={() => {
+                                    for (let i = 0; i < qty; i++) onAddToCart(product, selectedSize);
+                                }}
+                                className="w-full h-12 bg-[#262626] hover:bg-black text-white font-chakra text-[11px] uppercase tracking-[0.25em] transition-colors duration-200 cursor-pointer flex items-center justify-center gap-2"
                             >
-                                <ShoppingBag className="w-4 h-4" />
                                 Add To Cart
                             </button>
-                        </div>
 
-                        {/* Wishlist */}
-                        <button
-                            onClick={() => onToggleWishlist(product)}
-                            className={`w-full h-11 border text-xs font-extrabold tracking-widest uppercase transition-all cursor-pointer ${isWishlisted
-                                ? 'border-red-400 text-red-500 bg-red-50 hover:bg-red-100'
-                                : 'border-gray-300 text-gray-700 hover:border-gray-900 hover:bg-gray-50'
-                                }`}
-                        >
-                            {isWishlisted ? '♥ Saved to Wishlist' : '♡ Save to Wishlist'}
-                        </button>
-
-                        <div className="text-xs text-gray-500 space-y-1 border-t border-gray-100 pt-4">
-                            <p>
-                                <span className="font-medium text-gray-700">Categories:</span>{' '}
-                                {product.category}
-                                {product.tags && product.tags.length > 0 && `, ${product.tags.join(', ')}`}
-                            </p>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <span className="text-xs text-gray-500 font-medium">Share:</span>
-                            <button className="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer" aria-label="Share">
-                                <Share2 className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Tabs */}
-                <div className="mt-16 border-b border-gray-200">
-                    <div className="flex gap-8">
-                        {(['description', 'reviews'] as Tab[]).map((tab) => (
                             <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`pb-3 text-sm font-medium capitalize tracking-wide transition-colors cursor-pointer border-b-2 -mb-px ${activeTab === tab
-                                    ? 'border-yellow-500 text-yellow-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-800'
+                                onClick={() => onToggleWishlist(product)}
+                                className={`w-full h-11 border font-chakra text-[10px] uppercase tracking-[0.2em] transition-all duration-200 cursor-pointer ${isWishlisted
+                                    ? 'border-red-300 text-red-500 bg-red-50'
+                                    : 'border-gray-200 text-gray-500 hover:border-black hover:text-black'
                                     }`}
                             >
-                                {tab === 'reviews' ? 'Reviews (0)' : 'Description'}
+                                {isWishlisted ? '♥ Saved to Wishlist' : '♡ Save to Wishlist'}
                             </button>
-                        ))}
+                        </div>
+
+                        {/* Accordion Tabs */}
+                        <div className="border-t border-gray-200 pt-2 divide-y divide-gray-200 font-chakra">
+                            <details className="group py-3 cursor-pointer">
+                                <summary className="flex justify-between items-center text-[11px] uppercase tracking-widest text-[#111111] list-none font-medium">
+                                    Description
+                                    <span className="transition group-open:rotate-180">
+                                        <Plus className="w-3.5 h-3.5 group-open:hidden" />
+                                        <Minus className="w-3.5 h-3.5 hidden group-open:block" />
+                                    </span>
+                                </summary>
+                                <p className="mt-3 text-xs text-gray-500 leading-relaxed font-sans">
+                                    {(product as any).descriptionAbout || product.description ||
+                                        `Introducing the ${product.name}. Built for daily performance and training, constructed with lightweight water-resistant material.`
+                                    }
+                                </p>
+                            </details>
+
+                            <details className="group py-3 cursor-pointer">
+                                <summary className="flex justify-between items-center text-[11px] uppercase tracking-widest text-[#111111] list-none font-medium">
+                                    Designed For
+                                    <span className="transition group-open:rotate-180">
+                                        <Plus className="w-3.5 h-3.5 group-open:hidden" />
+                                        <Minus className="w-3.5 h-3.5 hidden group-open:block" />
+                                    </span>
+                                </summary>
+                                <p className="mt-3 text-xs text-gray-500 leading-relaxed font-sans">
+                                    Gym workouts, daily athletic wear, and outdoor mobility training.
+                                </p>
+                            </details>
+
+                            <details className="group py-3 cursor-pointer">
+                                <summary className="flex justify-between items-center text-[11px] uppercase tracking-widest text-[#111111] list-none font-medium">
+                                    Fabric + Technology
+                                    <span className="transition group-open:rotate-180">
+                                        <Plus className="w-3.5 h-3.5 group-open:hidden" />
+                                        <Minus className="w-3.5 h-3.5 hidden group-open:block" />
+                                    </span>
+                                </summary>
+                                <p className="mt-3 text-xs text-gray-500 leading-relaxed font-sans">
+                                    TETRA-LITE® Water-Resistant & Breathable 4-way stretch blend fabric.
+                                </p>
+                            </details>
+                        </div>
                     </div>
                 </div>
 
-                {/* Tab Content */}
-                <div className="py-10 max-w-2xl text-sm text-gray-600 leading-relaxed">
-                    {activeTab === 'description' ? (
-                        <div className="space-y-8">
-
-                            {/* About */}
-                            <div className="relative">
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400 rounded-full" />
-                                <div className="pl-5">
-                                    <p className="text-[10px] uppercase tracking-widest text-yellow-600 font-bold mb-2">
-                                        About this product
-                                    </p>
-                                    <p className="text-gray-700 leading-relaxed text-sm">
-                                        {(product as any).descriptionAbout || product.description ||
-                                            `Introducing the FITFAM ${product.name}. Built for those who never stop pushing limits — a streetwear-inspired fit designed for gym sessions, daily wear, and stronger days ahead.`
-                                        }
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Features */}
-                            <div>
-                                <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-4">
-                                    Features
-                                </p>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    {(
-                                        (product as any).descriptionFeatures
-                                            ? (product as any).descriptionFeatures.split('\n').filter(Boolean)
-                                            : ['Premium Oversized Fit', 'Soft & Comfortable Fabric', 'High-Quality Print', 'Unisex Design', 'Perfect for Gym & Casual Wear']
-                                    ).map((feature: string, i: number) => (
-                                        <div
-                                            key={i}
-                                            className="flex items-center gap-3 bg-gray-50 border border-gray-100 px-4 py-3 rounded-lg"
-                                        >
-                                            <span className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0">
-                                                ✓
-                                            </span>
-                                            <span className="text-sm text-gray-700 font-medium">{feature.trim()}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Care Instructions */}
-                            {(product as any).descriptionCare && (
-                                <div>
-                                    <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-4">
-                                        Care Instructions
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {(product as any).descriptionCare
-                                            .split('\n')
-                                            .filter(Boolean)
-                                            .map((instruction: string, i: number) => (
-                                                <span
-                                                    key={i}
-                                                    className="flex items-center gap-2 bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold px-3 py-2 rounded-full"
-                                                >
-                                                    <span>♻</span>
-                                                    {instruction.trim()}
-                                                </span>
-                                            ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    ) : (
-                        <p className="text-gray-500 italic">There are no reviews yet. Be the first to review this product.</p>
-                    )}
-                </div>
-
-                {/* Related Products */}
+                {/* ── Related Products ──────────────────────────────── */}
                 {related.length > 0 && (
-                    <div className="border-t border-gray-100 pt-14">
-                        <h2 className="text-xl font-semibold text-gray-950 uppercase tracking-wider text-center mb-10">
+                    <div className="border-t border-gray-100 pt-14 mt-10">
+                        <h2 className="font-chakra font-normal text-[#111111] text-sm uppercase tracking-[0.3em] text-center mb-10">
                             Related Products
                         </h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">

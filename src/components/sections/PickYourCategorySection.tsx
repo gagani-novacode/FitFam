@@ -1,63 +1,58 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Instagram } from 'lucide-react';
+import { Button } from '../ui/Button';
 
-interface PickYourCategorySectionProps {
-  activeCategory?: string;
-}
+// @ts-ignore
+import camoBannerImage from '../../assets/camo.jpg';
 
-export const PickYourCategorySection: React.FC<PickYourCategorySectionProps> = () => {
+export const PickYourCategorySection: React.FC = () => {
   const navigate = useNavigate();
-  const categories = [
-    { name: 'Women', value: 'Women' },
-    { name: 'Men', value: 'Men' },
-    { name: 'Accessories', value: 'Accessories' }
-  ];
-
-  const handleCategoryClick = (value: string) => {
-    navigate(`/category/${value.toLowerCase()}`);
-  };
 
   return (
-    <section className="py-20 bg-[#F5F5F5]" id="pick-category">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <section className="relative w-full overflow-hidden" style={{ aspectRatio: '16/7' }}>
 
-        {/* Title */}
-        <div className="mb-10">
-          <h2 className="font-bebas text-4xl sm:text-5xl font-bold tracking-wider text-gray-950 uppercase">
-            PICK YOUR CATEGORY
-          </h2>
-        </div>
+      {/* Background Image */}
+      <img
+        src={camoBannerImage}
+        alt="Camo Series"
+        className="absolute inset-0 w-full h-full object-cover object-center"
+        loading="lazy"
+      />
 
-        {/* Buttons Row */}
-        <div className="flex flex-wrap items-center justify-center gap-4 mb-16">
-          {categories.map((cat) => {
-            return (
-              <button
-                key={cat.name}
-                onClick={() => handleCategoryClick(cat.value)}
-                className="border-2 border-black font-extrabold text-xs uppercase tracking-widest px-8 py-3.5 text-black bg-transparent transition-all duration-300 hover:bg-black hover:text-white cursor-pointer min-w-[140px]"
-              >
-                {cat.name}
-              </button>
-            );
-          })}
-        </div>
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/40" />
 
-        {/* Instagram Follow Row */}
-        <div className="flex justify-center">
-          <a
-            href="https://instagram.com"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2.5 border border-gray-300 bg-white hover:border-black text-gray-800 hover:text-black font-semibold text-xs uppercase tracking-widest px-6 py-3 transition-all duration-300 rounded-sm shadow-xs cursor-pointer"
+      {/* Content — bottom left aligned like reference image */}
+      <div className="absolute bottom-0 left-0 p-10 sm:p-14 lg:p-16 flex flex-col items-start gap-4">
+
+        {/* Series label */}
+        <p className="font-chakra font-normal text-[11px] uppercase tracking-[0.4em] text-white/70">
+          New Collection
+        </p>
+
+        {/* Main title */}
+        <h2 className="font-chakra font-bold text-3xl sm:text-4xl lg:text-5xl uppercase tracking-[0.15em] text-white leading-tight">
+          Camo Series
+        </h2>
+
+        {/* Subtitle */}
+        <p className="font-chakra font-normal text-[11px] uppercase tracking-[0.25em] text-white/80 max-w-sm">
+          Built to move. Built to last.
+        </p>
+
+        {/* CTA Button */}
+        <div className="mt-2">
+          <Button
+            variant="hero"
+            size="md"
+            onClick={() => navigate('/category/men/CAMOSERIES')}
           >
-            <Instagram className="w-4 h-4 text-pink-600 fill-transparent" />
-            <span>Follow to Instagram</span>
-          </a>
+            Shop Now
+          </Button>
         </div>
 
       </div>
+
     </section>
   );
 };

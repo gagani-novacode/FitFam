@@ -5,6 +5,7 @@ import { NewCollectionSection } from '../components/sections/NewCollectionSectio
 import { CategoryBannersSection } from '../components/sections/CategoryBannersSection';
 import { TrendingNowSection } from '../components/sections/TrendingNowSection';
 import { PickYourCategorySection } from '../components/sections/PickYourCategorySection';
+import { UnmarkedSection } from '../components/sections/UnmarkedSection';
 import { BrandVideoSection } from '../components/sections/BrandVideoSection';
 import { Footer } from '../components/layout/Footer';
 import { Product } from '../data/products';
@@ -70,6 +71,13 @@ export const HomePage: React.FC<HomePageProps> = ({
             {/* ← NEW prop */}
             {/* PICK YOUR CATEGORY SECTION */}
             <PickYourCategorySection />
+
+            <UnmarkedSection
+                products={products}
+                onAddToCart={onAddToCart}
+                onToggleWishlist={onToggleWishlist}
+                wishlistItems={wishlistItems}
+            />
 
             {/* BRAND VIDEO SECTION */}
             <BrandVideoSection />

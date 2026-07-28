@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useParams, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Navbar } from './components/layout/Navbar';
 import { HomePage } from './pages/HomePage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
@@ -27,6 +27,18 @@ interface ToastMessage {
   id: string;
   text: string;
   type: 'cart' | 'wishlist' | 'success';
+}
+
+// ─── Home page has no top-padding (transparent navbar overlays hero).
+// All other pages get pt-16 (64px) so content clears the fixed navbar.
+function PageWrapper({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+  return (
+    <div className={isHome ? '' : 'pt-16'}>
+      {children}
+    </div>
+  );
 }
 
 // ─── Inner app (needs to be inside BrowserRouter to use hooks) ─────────────
@@ -185,8 +197,8 @@ function AppInner() {
         onOpenCheckout={() => navigate('/checkout')}
       />
 
-      {/* PAGE ROUTES */}
-      <div className="pt-[68px]">
+      {/* PAGE ROUTES — home page has no top padding so transparent navbar overlays the hero */}
+      <PageWrapper>
         <Routes>
           {/* Home page — all your existing sections */}
           <Route
@@ -301,7 +313,7 @@ function AppInner() {
           {/* ── 404 CATCH-ALL ─────────────────────────────────── */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </div>
+      </PageWrapper>
 
       {/* FLOATING TOASTS — UNCHANGED, global so stays here */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 max-w-sm w-full px-4 sm:px-0">

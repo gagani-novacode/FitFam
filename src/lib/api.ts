@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://kangaroo-elude-reshape.ngrok-free.dev/api/v1";
-const BASE_URL = "https://kangaroo-elude-reshape.ngrok-free.dev";
+const API_URL = "https://cove-consumers-knowing-human.trycloudflare.com/api/v1";
+const BASE_URL = "https://cove-consumers-knowing-human.trycloudflare.com";
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -26,5 +26,7 @@ api.interceptors.request.use(
 // Rewrites localhost image URLs to ngrok URL so images load correctly
 export function fixImageUrl(url: string): string {
   if (!url) return url;
-  return url.replace("http://localhost:8080", BASE_URL);
+  return url
+    .replace("http://localhost:8080", BASE_URL)
+    .replace("https://kangaroo-elude-reshape.ngrok-free.dev", BASE_URL);
 }

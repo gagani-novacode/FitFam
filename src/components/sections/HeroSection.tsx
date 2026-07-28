@@ -1,17 +1,20 @@
 import React from 'react';
 // @ts-ignore
-import heroBgImage from '../../hero-bg.png';
+import heroBgImage from '../../hero-bg.jpg';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../ui/Button';
 
 interface HeroSectionProps {
   onShopClick?: () => void;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = () => {
+  const navigate = useNavigate();
   return (
     /* 1. CONTAINER: Increased height on mobile from h-auto to a striking 75vh (75% of viewport height).
           On desktop, it smoothly adapts back to full screen height minus the new top navbar height.
     */
-    <section className="relative h-[75vh] md:min-h-[calc(100vh-48px)] w-full flex items-center bg-[#f0f0f0] overflow-hidden select-none">
+    <section className="relative h-[75vh] md:min-h-screen w-full flex items-center bg-[#f0f0f0] overflow-hidden select-none">
 
       {/* Background Image Container */}
       <div className="absolute inset-0 w-full h-full">
@@ -32,7 +35,7 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
       {/* 3. WATERMARK OVERLAY: 
             Positioned cleanly over the taller image presentation frame.
       */}
-      <div className="absolute inset-x-0 bottom-8 md:bottom-auto md:relative max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 w-full z-10 flex items-center">
+      <div className="absolute inset-x-0 bottom-8 md:bottom-auto md:relative max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 w-full z-10 flex flex-col items-start gap-4 md:gap-6">
 
         {/* Large Logo & Text Lockup - Compact padding and background to look pristine overlaying the layout */}
         <div className="flex items-center gap-3 md:gap-6 bg-white/40 backdrop-blur-xs p-2.5 md:p-6 rounded-xs shadow-xs">
@@ -46,15 +49,19 @@ export const HeroSection: React.FC<HeroSectionProps> = () => {
 
           {/* Typography block */}
           <div className="flex flex-col leading-none">
-            <span className="font-bebas text-xl sm:text-5xl md:text-7xl tracking-[0.25em] text-[#111111] font-bold uppercase">
+            <span className="font-chakra text-xl sm:text-5xl md:text-7xl tracking-[0.25em] text-[#111111] font-bold uppercase">
               FITFAM
             </span>
-            <span className="text-[8px] sm:text-xs md:text-base tracking-[0.68em] text-[#555555] font-bold mt-0.5 md:mt-1 font-mono uppercase pl-0.5">
+            <span className="font-chakra text-[8px] sm:text-xs md:text-base tracking-[0.68em] text-[#555555] font-bold mt-0.5 md:mt-1 font-mono uppercase pl-0.5">
               ACTIVE
             </span>
           </div>
 
         </div>
+        {/* Shop Now Button */}
+        <Button variant="hero" size="md" onClick={() => navigate('/shop')}>
+          Shop Now
+        </Button>
 
       </div>
 

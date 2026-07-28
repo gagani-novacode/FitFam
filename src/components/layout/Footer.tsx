@@ -1,19 +1,36 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, ArrowUp } from 'lucide-react';
+import { Check, ArrowUp, Instagram } from 'lucide-react';
+import { api } from '../../lib/api';
 
 export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim() !== '') {
-      setSubscribed(true);
+    if (!email.trim()) return;
+    setErrorMsg('');
+    setLoading(true);
+
+    try {
+      const res = await api.post('/newsletter/subscribe', { email: email.trim() });
+      if (res.data.ok) {
+        setSubscribed(true);
+        setTimeout(() => {
+          setSubscribed(false);
+          setEmail('');
+        }, 4000);
+      }
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.error || 'Failed to subscribe. Please try again.');
       setTimeout(() => {
-        setSubscribed(false);
-        setEmail('');
+        setErrorMsg('');
       }, 4000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -22,110 +39,136 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    /* CHANGED: Increased pb-6 to pb-24 so the footer elements lift cleanly above your sticky bottom nav bar */
-    <footer id="footer" className="bg-[#111111] text-white pt-16 pb-24">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&display=swap');
+        #fitfam-footer * { font-family: 'Chakra Petch', sans-serif; }
+        #fitfam-footer a { text-decoration: none; }
+        #fitfam-footer .footer-link { font-size: 11px; letter-spacing: 0.08em; color: #555; font-weight: 400; transition: color 0.2s; }
+        #fitfam-footer .footer-link:hover { color: #111; }
+        #fitfam-footer .footer-heading { font-size: 11px; letter-spacing: 0.15em; font-weight: 600; margin-bottom: 20px; color: #111; }
+      `}</style>
 
-        {/* TOP: Centered Minimalist Newsletter Sign-up */}
-        <div className="flex justify-center mb-16">
-          <div className="w-full max-w-md text-center">
-            {subscribed ? (
-              <div className="flex items-center justify-center gap-2 text-gray-400 text-sm tracking-wider uppercase">
-                <Check className="w-4 h-4 text-white" /> Subscribed successfully.
+      <footer id="fitfam-footer" style={{ background: '#f0efeb', color: '#111', paddingTop: '60px', paddingBottom: '32px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 32px' }}>
+
+          {/* 3-column grid: About+Legal | Personal+Shop | Connect */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '48px', marginBottom: '48px' }}>
+
+            {/* Column 1: ABOUT + LEGAL */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              <div>
+                <h4 className="footer-heading">ABOUT</h4>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <li><Link to="/about" className="footer-link">About Us</Link></li>
+                  <li><Link to="/faq" className="footer-link">FAQs</Link></li>
+                  <li><Link to="/shipping" className="footer-link">Shipping &amp; Returns</Link></li>
+                  <li><Link to="/contact" className="footer-link">Contact Us</Link></li>
+                </ul>
               </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="flex items-center border-b border-gray-700 pb-2">
-                <input
-                  type="email"
-                  required
-                  placeholder="Your email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-transparent text-sm text-white placeholder-gray-500 outline-none font-light tracking-wide"
-                />
-                <button
-                  type="submit"
-                  className="text-xs font-semibold uppercase tracking-wider text-white pl-4 hover:text-gray-300 transition-colors cursor-pointer whitespace-nowrap"
+
+              <div>
+                <h4 className="footer-heading">LEGAL</h4>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <li><Link to="/terms" className="footer-link">Terms &amp; Conditions</Link></li>
+                  <li><Link to="/privacy" className="footer-link">Privacy Policy</Link></li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Column 2: PERSONAL + SHOP */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              <div>
+                <h4 className="footer-heading">PERSONAL</h4>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <li><Link to="/wishlist" className="footer-link">Wishlist</Link></li>
+                  <li><Link to="/account" className="footer-link">My account</Link></li>
+                  <li><Link to="/cart" className="footer-link">Checkout</Link></li>
+                  <li><Link to="/cart" className="footer-link">Cart</Link></li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="footer-heading">SHOP</h4>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <li><Link to="/category/women" className="footer-link">Women</Link></li>
+                  <li><Link to="/category/accessories" className="footer-link">Accessories</Link></li>
+                  <li><Link to="/category/men" className="footer-link">Men</Link></li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Column 3: CONNECT */}
+            <div>
+              <h4 className="footer-heading">CONNECT</h4>
+
+              <div style={{ marginBottom: '28px' }}>
+                <a href="https://instagram.com" target="_blank" rel="noreferrer" style={{ color: '#555', transition: 'color 0.2s' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#111')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#555')}
                 >
-                  Sign up
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
+                  <Instagram size={18} />
+                </a>
+              </div>
 
-        {/* MAIN FOOTER LINKS: 4-column grid */}
-        <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-8 mb-16 text-left">
+              <div>
+                <p style={{ fontSize: '11px', letterSpacing: '0.08em', color: '#555', marginBottom: '12px' }}>
+                  Subscribe to our newsletter
+                </p>
+                {subscribed ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#111', letterSpacing: '0.1em' }}>
+                    <Check size={14} /> Subscribed successfully.
+                  </div>
+                ) : (
+                  <>
+                    <form onSubmit={handleSubscribe} style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #aaa', paddingBottom: '8px' }}>
+                      <input
+                        type="email"
+                        required
+                        placeholder="Your email address"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        disabled={loading}
+                        style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontSize: '11px', color: '#111', letterSpacing: '0.06em', fontFamily: 'Chakra Petch, sans-serif' }}
+                      />
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        style={{ background: 'none', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '10px', fontWeight: 600, letterSpacing: '0.15em', color: '#111', fontFamily: 'Chakra Petch, sans-serif', paddingLeft: '12px', opacity: loading ? 0.5 : 1 }}
+                      >
+                        {loading ? 'WAIT...' : 'SIGN UP'}
+                      </button>
+                    </form>
+                    {errorMsg && (
+                      <p style={{ fontSize: '10px', color: '#dc2626', marginTop: '6px', letterSpacing: '0.05em' }}>
+                        {errorMsg}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
 
-          {/* Section 1: INFORMATION */}
-          <div className="w-full">
-            <h4 className="text-[13px] uppercase tracking-widest text-white font-bold mb-4">
-              INFORMATION
-            </h4>
-            <ul className="space-y-3 text-[15px] text-gray-300 font-light pl-0.5">
-              <li><Link to="/about"    className="hover:text-white transition-colors">About Us</Link></li>
-              <li><Link to="/faq"      className="hover:text-white transition-colors">FAQs</Link></li>
-              <li><Link to="/shipping" className="hover:text-white transition-colors">Shipping &amp; Returns</Link></li>
-              <li><Link to="/contact"  className="hover:text-white transition-colors">Contact Us</Link></li>
-            </ul>
-          </div>
-
-          {/* Section 2: PERSONAL */}
-          <div className="w-full">
-            <h4 className="text-[13px] uppercase tracking-widest text-white font-bold mb-4">
-              PERSONAL
-            </h4>
-            <ul className="space-y-3 text-[15px] text-gray-300 font-light pl-0.5">
-              <li><Link to="/wishlist" className="hover:text-white transition-colors">Wishlist</Link></li>
-              <li><Link to="/account" className="hover:text-white transition-colors">My account</Link></li>
-              <li><Link to="/cart"    className="hover:text-white transition-colors">Checkout</Link></li>
-              <li><Link to="/cart"    className="hover:text-white transition-colors">Cart</Link></li>
-            </ul>
-          </div>
-
-          {/* Section 3: SHOP */}
-          <div className="w-full">
-            <h4 className="text-[13px] uppercase tracking-widest text-white font-bold mb-4">
-              SHOP
-            </h4>
-            <ul className="space-y-3 text-[15px] text-gray-300 font-light pl-0.5">
-              <li><Link to="/category/women"       className="hover:text-white transition-colors">Women</Link></li>
-              <li><Link to="/category/accessories" className="hover:text-white transition-colors">Accessories</Link></li>
-              <li><Link to="/category/men"         className="hover:text-white transition-colors">Men</Link></li>
-            </ul>
           </div>
 
-          {/* Section 4: LEGAL */}
-          <div className="w-full">
-            <h4 className="text-[13px] uppercase tracking-widest text-white font-bold mb-4">
-              LEGAL
-            </h4>
-            <ul className="space-y-3 text-[15px] text-gray-300 font-light pl-0.5">
-              <li><Link to="/terms"   className="hover:text-white transition-colors">Terms &amp; Conditions</Link></li>
-              <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-            </ul>
-          </div>
-
-        </div>
-
-        {/* BOTTOM BAR */}
-        <div className="pt-6 border-t border-[#1a1a1a] flex items-center justify-between relative">
-          <div className="w-full text-center">
-            <p className="text-[11px] text-gray-400 tracking-wide font-light">
-              ©2025 FITFAM All rights reserved
+          {/* Bottom bar */}
+          <div style={{ borderTop: '1px solid #ccc', paddingTop: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+            <p style={{ fontSize: '10px', letterSpacing: '0.12em', color: '#888', fontWeight: 400 }}>
+              ©2025 FITFAM ALL RIGHTS RESERVED
             </p>
+            <button
+              onClick={scrollToTop}
+              style={{ position: 'absolute', right: 0, background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: '4px' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#111')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#888')}
+              aria-label="Scroll to top"
+            >
+              <ArrowUp size={16} />
+            </button>
           </div>
 
-          <button
-            onClick={scrollToTop}
-            className="absolute right-0 text-gray-400 hover:text-white transition-colors cursor-pointer p-1"
-            aria-label="Scroll to top"
-          >
-            <ArrowUp className="w-4 h-4" />
-          </button>
         </div>
-
-      </div>
-    </footer>
+      </footer>
+    </>
   );
 };
