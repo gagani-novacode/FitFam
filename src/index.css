@@ -8,12 +8,19 @@
   --font-chakra: "Chakra Petch", sans-serif;
 }
 
-html {
+html, body {
   scroll-behavior: smooth;
   font-family: var(--font-sans);
   background-color: #ffffff;
   color: #111111;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+#root {
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* Custom scrollbar for horizontal scroll sections */

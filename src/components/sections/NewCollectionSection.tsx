@@ -19,7 +19,7 @@ export const NewCollectionSection: React.FC<NewCollectionSectionProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  const newProducts = products.filter(p => p.tags?.includes('New Arrivals') || p.isNew);
+  const newProducts = products.filter(p => p.tags?.includes('New Arrivals') || p.isNewProduct);
 
   // Show only first 8 products (2 rows × 4 columns)
   const displayProducts = newProducts.slice(0, 8);
@@ -61,7 +61,7 @@ export const NewCollectionSection: React.FC<NewCollectionSectionProps> = ({
 
         {/* View All button */}
         <div className="flex justify-center mt-14">
-          <Button variant="outline" size="md" onClick={() => { window.scrollTo(0, 0); navigate('/category/all'); }}>
+          <Button variant="outline" size="md" onClick={() => { window.scrollTo(0, 0); navigate('/shop'); }}>
             View All
           </Button>
         </div>

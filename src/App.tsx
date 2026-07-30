@@ -71,6 +71,7 @@ function AppInner() {
         const mapped = res.data.products.map((p: any) => ({
           ...p,
           id: p._id,
+          isNewProduct: p.isNewProduct,
           image: fixImageUrl(p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/600'),
           images: (p.images || []).map(fixImageUrl),
         }));
