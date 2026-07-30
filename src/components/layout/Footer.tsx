@@ -49,17 +49,17 @@ export const Footer: React.FC = () => {
         #fitfam-footer .footer-heading { font-size: 11px; letter-spacing: 0.15em; font-weight: 600; margin-bottom: 20px; color: #111; }
       `}</style>
 
-      <footer id="fitfam-footer" style={{ background: '#f0efeb', color: '#111', paddingTop: '60px', paddingBottom: '32px' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 32px' }}>
+      <footer id="fitfam-footer" className="bg-[#f0efeb] text-[#111] pt-16 pb-8">
+        <div className="max-w-[1200px] mx-auto px-6 sm:px-8">
 
-          {/* 3-column grid: About+Legal | Personal+Shop | Connect */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '48px', marginBottom: '48px' }}>
+          {/* Responsive grid: 2 columns on mobile, 3 columns on desktop */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-10 sm:gap-8 md:gap-12 mb-12">
 
             {/* Column 1: ABOUT + LEGAL */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div className="flex flex-col gap-8">
               <div>
                 <h4 className="footer-heading">ABOUT</h4>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <ul className="list-none p-0 m-0 flex flex-col gap-3">
                   <li><Link to="/about" className="footer-link">About Us</Link></li>
                   <li><Link to="/faq" className="footer-link">FAQs</Link></li>
                   <li><Link to="/shipping" className="footer-link">Shipping &amp; Returns</Link></li>
@@ -69,7 +69,7 @@ export const Footer: React.FC = () => {
 
               <div>
                 <h4 className="footer-heading">LEGAL</h4>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <ul className="list-none p-0 m-0 flex flex-col gap-3">
                   <li><Link to="/terms" className="footer-link">Terms &amp; Conditions</Link></li>
                   <li><Link to="/privacy" className="footer-link">Privacy Policy</Link></li>
                 </ul>
@@ -77,10 +77,10 @@ export const Footer: React.FC = () => {
             </div>
 
             {/* Column 2: PERSONAL + SHOP */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div className="flex flex-col gap-8">
               <div>
                 <h4 className="footer-heading">PERSONAL</h4>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <ul className="list-none p-0 m-0 flex flex-col gap-3">
                   <li><Link to="/wishlist" className="footer-link">Wishlist</Link></li>
                   <li><Link to="/account" className="footer-link">My account</Link></li>
                   <li><Link to="/cart" className="footer-link">Checkout</Link></li>
@@ -90,7 +90,7 @@ export const Footer: React.FC = () => {
 
               <div>
                 <h4 className="footer-heading">SHOP</h4>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <ul className="list-none p-0 m-0 flex flex-col gap-3">
                   <li><Link to="/category/women" className="footer-link">Women</Link></li>
                   <li><Link to="/category/accessories" className="footer-link">Accessories</Link></li>
                   <li><Link to="/category/men" className="footer-link">Men</Link></li>
@@ -99,29 +99,27 @@ export const Footer: React.FC = () => {
             </div>
 
             {/* Column 3: CONNECT */}
-            <div>
-              <h4 className="footer-heading">CONNECT</h4>
+            <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
+              <h4 className="footer-heading !mb-4">CONNECT</h4>
 
-              <div style={{ marginBottom: '28px' }}>
-                <a href="https://instagram.com" target="_blank" rel="noreferrer" style={{ color: '#555', transition: 'color 0.2s' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#111')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#555')}
+              <div className="mb-2">
+                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-[#555] hover:text-[#111] transition-colors inline-block"
                 >
                   <Instagram size={18} />
                 </a>
               </div>
 
               <div>
-                <p style={{ fontSize: '11px', letterSpacing: '0.08em', color: '#555', marginBottom: '12px' }}>
+                <p className="text-[11px] tracking-[0.08em] text-[#555] mb-3">
                   Subscribe to our newsletter
                 </p>
                 {subscribed ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#111', letterSpacing: '0.1em' }}>
+                  <div className="flex items-center gap-2 text-[11px] text-[#111] tracking-[0.1em]">
                     <Check size={14} /> Subscribed successfully.
                   </div>
                 ) : (
                   <>
-                    <form onSubmit={handleSubscribe} style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #aaa', paddingBottom: '8px' }}>
+                    <form onSubmit={handleSubscribe} className="flex items-center border-b border-[#aaa] pb-2">
                       <input
                         type="email"
                         required
@@ -129,18 +127,18 @@ export const Footer: React.FC = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         disabled={loading}
-                        style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontSize: '11px', color: '#111', letterSpacing: '0.06em', fontFamily: 'Chakra Petch, sans-serif' }}
+                        className="flex-1 bg-transparent border-none outline-none text-[11px] text-[#111] tracking-[0.06em] font-chakra"
                       />
                       <button
                         type="submit"
                         disabled={loading}
-                        style={{ background: 'none', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '10px', fontWeight: 600, letterSpacing: '0.15em', color: '#111', fontFamily: 'Chakra Petch, sans-serif', paddingLeft: '12px', opacity: loading ? 0.5 : 1 }}
+                        className="bg-none border-none cursor-pointer text-[10px] font-semibold tracking-[0.15em] text-[#111] font-chakra pl-3 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {loading ? 'WAIT...' : 'SIGN UP'}
                       </button>
                     </form>
                     {errorMsg && (
-                      <p style={{ fontSize: '10px', color: '#dc2626', marginTop: '6px', letterSpacing: '0.05em' }}>
+                      <p className="text-[10px] color-[#dc2626] mt-1.5 tracking-[0.05em]">
                         {errorMsg}
                       </p>
                     )}
@@ -152,15 +150,13 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Bottom bar */}
-          <div style={{ borderTop: '1px solid #ccc', paddingTop: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-            <p style={{ fontSize: '10px', letterSpacing: '0.12em', color: '#888', fontWeight: 400 }}>
+          <div className="border-t border-gray-300 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <p className="text-[10px] tracking-[0.12em] text-[#888] font-normal uppercase">
               ©2025 FITFAM ALL RIGHTS RESERVED
             </p>
             <button
               onClick={scrollToTop}
-              style={{ position: 'absolute', right: 0, background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: '4px' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#111')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#888')}
+              className="text-[#888] hover:text-[#111] transition-colors p-1"
               aria-label="Scroll to top"
             >
               <ArrowUp size={16} />

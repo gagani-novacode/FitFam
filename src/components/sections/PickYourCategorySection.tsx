@@ -9,7 +9,7 @@ export const PickYourCategorySection: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative w-full overflow-hidden" style={{ aspectRatio: '16/7' }}>
+    <section className="relative w-full overflow-hidden aspect-[4/3] sm:aspect-[16/6] md:aspect-[16/7]">
 
       {/* Background Image */}
       <img
@@ -20,28 +20,28 @@ export const PickYourCategorySection: React.FC = () => {
       />
 
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-black/45" />
 
       {/* Content — bottom left aligned like reference image */}
-      <div className="absolute bottom-0 left-0 p-10 sm:p-14 lg:p-16 flex flex-col items-start gap-4">
+      <div className="absolute bottom-0 left-0 p-6 sm:p-12 lg:p-16 flex flex-col items-start gap-2.5 sm:gap-4">
 
         {/* Series label */}
-        <p className="font-chakra font-normal text-[11px] uppercase tracking-[0.4em] text-white/70">
+        <p className="font-chakra font-normal text-[10px] sm:text-[11px] uppercase tracking-[0.4em] text-white/70">
           New Collection
         </p>
 
         {/* Main title */}
-        <h2 className="font-chakra font-bold text-3xl sm:text-4xl lg:text-5xl uppercase tracking-[0.15em] text-white leading-tight">
+        <h2 className="font-chakra font-bold text-2xl sm:text-4xl lg:text-5xl uppercase tracking-[0.15em] text-white leading-tight">
           Camo Series
         </h2>
 
         {/* Subtitle */}
-        <p className="font-chakra font-normal text-[11px] uppercase tracking-[0.25em] text-white/80 max-w-sm">
+        <p className="font-chakra font-normal text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-white/80 max-w-sm">
           Built to move. Built to last.
         </p>
 
         {/* CTA Button */}
-        <div className="mt-2">
+        <div className="mt-1 sm:mt-2">
           <Button
             variant="hero"
             size="md"

@@ -35,7 +35,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <img
           src={fixImageUrl(image)}
           alt={name}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${hoverImage ? 'md:group-hover:opacity-0' : ''}`}
           loading="lazy"
           referrerPolicy="no-referrer"
         />
@@ -45,7 +45,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <img
             src={fixImageUrl(hoverImage)}
             alt={name}
-            className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            className="absolute inset-0 w-full h-full object-cover opacity-0 md:group-hover:opacity-100 transition-opacity duration-500"
             loading="lazy"
             referrerPolicy="no-referrer"
           />
@@ -65,10 +65,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {name}
         </h3>
 
-        <div className="mt-1 min-h-[28px] flex items-center justify-center">
+        <div className="mt-1 flex flex-col items-center justify-center gap-1.5 md:min-h-[28px]">
 
-          {/* Price — hidden on hover */}
-          <div className="flex items-baseline justify-center gap-2 group-hover:hidden">
+          {/* Price — hidden on hover on desktop */}
+          <div className="flex items-baseline justify-center gap-2 md:group-hover:hidden">
             <span className="font-chakra font-normal text-[12px] text-gray-700 tracking-wider">
               {formatPrice(price)}
             </span>
@@ -79,9 +79,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             )}
           </div>
 
-          {/* Sizes — shown on hover */}
+          {/* Sizes — shown on hover on desktop, always shown on mobile */}
           {sizes && sizes.length > 0 && (
-            <div className="hidden group-hover:flex items-center justify-center gap-1.5 flex-wrap">
+            <div className="flex md:hidden md:group-hover:flex items-center justify-center gap-1 sm:gap-1.5 flex-wrap">
               {sizes.map((size) => (
                 <button
                   key={size}
@@ -90,7 +90,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                     setSelectedSize(size);
                     onAddToCart?.(product, size);
                   }}
-                  className={`text-[10px] font-chakra font-normal tracking-wider uppercase border px-2.5 py-1 transition-colors cursor-pointer ${selectedSize === size
+                  className={`text-[9px] sm:text-[10px] font-chakra font-normal tracking-wider uppercase border px-2 sm:px-2.5 py-0.5 sm:py-1 transition-colors cursor-pointer ${selectedSize === size
                       ? 'bg-black text-white border-black'
                       : 'border-gray-300 text-gray-700 hover:border-black hover:bg-black hover:text-white'
                     }`}

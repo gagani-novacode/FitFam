@@ -107,6 +107,15 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
       setReturnedFromPayHere(true);
       localStorage.removeItem('fitfam_pending_orderRef');
     }
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      setIsProcessing(false);
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+    };
   }, []);
 
   const [billingDetails, setBillingDetails] = useState({
