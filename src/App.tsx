@@ -114,17 +114,18 @@ function AppInner() {
 
   // All handlers — UNCHANGED (except size added)
   const handleAddToCart = (product: Product, size: string = 'M') => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id && item.size === size);
-      if (existing) {
-        showToast(`Increased quantity of ${product.name} (${size}) in cart!`, 'cart');
-        return prev.map((item) =>
+    const existing = cartItems.find((item) => item.product.id === product.id && item.size === size);
+    if (existing) {
+      showToast(`Increased quantity of ${product.name} (${size}) in cart!`, 'cart');
+      setCartItems((prev) =>
+        prev.map((item) =>
           item.product.id === product.id && item.size === size ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      }
+        )
+      );
+    } else {
       showToast(`${product.name} (${size}) added to cart!`, 'cart');
-      return [...prev, { product, quantity: 1, size }];
-    });
+      setCartItems((prev) => [...prev, { product, quantity: 1, size }]);
+    }
   };
 
   const handleRemoveFromCart = (productId: string) => {
@@ -142,16 +143,14 @@ function AppInner() {
   };
 
   const handleToggleWishlist = (product: Product) => {
-    setWishlistItems((prev) => {
-      const isSaved = prev.some((item) => item.id === product.id);
-      if (isSaved) {
-        showToast(`${product.name} removed from wishlist.`, 'wishlist');
-        return prev.filter((item) => item.id !== product.id);
-      } else {
-        showToast(`${product.name} saved to wishlist!`, 'wishlist');
-        return [...prev, product];
-      }
-    });
+    const isSaved = wishlistItems.some((item) => item.id === product.id);
+    if (isSaved) {
+      showToast(`${product.name} removed from wishlist.`, 'wishlist');
+      setWishlistItems((prev) => prev.filter((item) => item.id !== product.id));
+    } else {
+      showToast(`${product.name} saved to wishlist!`, 'wishlist');
+      setWishlistItems((prev) => [...prev, product]);
+    }
   };
 
   const handleRemoveFromWishlist = (productId: string) => {

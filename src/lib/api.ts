@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://cove-consumers-knowing-human.trycloudflare.com/api/v1";
-const BASE_URL = "https://cove-consumers-knowing-human.trycloudflare.com";
+const API_URL = import.meta.env.VITE_BACKEND_URL + "/api/v1";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 export const api = axios.create({
   baseURL: API_URL,
