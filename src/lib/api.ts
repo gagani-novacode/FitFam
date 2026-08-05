@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL + "/api/v1";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+const API_URL = BASE_URL + "/api/v1";
 
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_URL, // ✅ uses VITE_BACKEND_URL from .env
   headers: {
     "Content-Type": "application/json",
   },
@@ -13,17 +13,14 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Rewrites localhost image URLs to ngrok URL so images load correctly
 export function fixImageUrl(url: string): string {
   if (!url) return url;
   return url
