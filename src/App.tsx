@@ -114,31 +114,33 @@ function AppInner() {
   };
 
   // All handlers — UNCHANGED (except size added)
-  const handleAddToCart = (product: Product, size: string = 'M') => {
-    const existing = cartItems.find((item) => item.product.id === product.id && item.size === size);
+  const handleAddToCart = (product: Product, size?: string) => {
+    const resolvedSize = size ?? product.sizes?.[0] ?? 'ONE SIZE';
+
+    const existing = cartItems.find((item) => item.product.id === product.id && item.size === resolvedSize);
     if (existing) {
-      showToast(`Increased quantity of ${product.name} (${size}) in cart!`, 'cart');
+      showToast(`Increased quantity of ${product.name} (${resolvedSize}) in cart!`, 'cart');
       setCartItems((prev) =>
         prev.map((item) =>
-          item.product.id === product.id && item.size === size ? { ...item, quantity: item.quantity + 1 } : item
+          item.product.id === product.id && item.size === resolvedSize ? { ...item, quantity: item.quantity + 1 } : item
         )
       );
     } else {
-      showToast(`${product.name} (${size}) added to cart!`, 'cart');
-      setCartItems((prev) => [...prev, { product, quantity: 1, size }]);
+      showToast(`${product.name} (${resolvedSize}) added to cart!`, 'cart');
+      setCartItems((prev) => [...prev, { product, quantity: 1, size: resolvedSize }]);
     }
   };
 
-  const handleRemoveFromCart = (productId: string) => {
-    const product = cartItems.find(item => item.product.id === productId)?.product;
-    if (product) showToast(`${product.name} removed from cart.`, 'success');
-    setCartItems((prev) => prev.filter((item) => item.product.id !== productId));
+  const handleRemoveFromCart = (productId: string, size?: string) => {
+    const product = cartItems.find(item => item.product.id === productId && (!size || item.size === size))?.product;
+    if (product) showToast(`${product.name}${size ? ` (${size})` : ''} removed from cart.`, 'success');
+    setCartItems((prev) => prev.filter((item) => !(item.product.id === productId && (!size || item.size === size))));
   };
 
-  const handleUpdateQuantity = (productId: string, quantity: number) => {
+  const handleUpdateQuantity = (productId: string, quantity: number, size?: string) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
+        item.product.id === productId && (!size || item.size === size) ? { ...item, quantity } : item
       )
     );
   };

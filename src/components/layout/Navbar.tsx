@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Search, User, ShoppingBag, X, Heart } from 'lucide-react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Product } from '../../data/products';
+import SaleBanner from '../ui/SaleBanner';
 
 interface NavbarProps {
-  cartItems: { product: Product; quantity: number }[];
+  cartItems: { product: Product; quantity: number; size: string }[];
   wishlistItems: Product[];
-  onRemoveFromCart: (productId: string) => void;
-  onUpdateCartQuantity: (productId: string, quantity: number) => void;
+  onRemoveFromCart: (productId: string, size?: string) => void;
+  onUpdateCartQuantity: (productId: string, quantity: number, size?: string) => void;
   onRemoveFromWishlist: (productId: string) => void;
   onSearchQueryChange: (query: string) => void;
   activeCategory: string;
@@ -69,11 +70,12 @@ export const Navbar: React.FC<NavbarProps> = ({
       <header
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => { setIsHovered(false); setOpenMenu(null); }}
-        className={`fixed top-0 left-0 w-full z-40 transition-all duration-500 ${isOpaque ? 'bg-white shadow-sm border-b border-gray-100' : 'bg-transparent'}`}
+        className="fixed top-0 left-0 w-full z-40 flex flex-col"
       >
-        <div className="w-full px-4 md:px-6 lg:px-10 flex items-center h-16 relative">
+        <div className={`w-full transition-all duration-500 ${isOpaque ? 'bg-white shadow-sm border-b border-gray-100' : 'bg-transparent'}`}>
+          <div className="w-full px-4 md:px-6 lg:px-10 flex items-center h-16 relative">
 
-          {/* LEFT: Navigation Links & Mobile Menu Button */}
+            {/* LEFT: Navigation Links & Mobile Menu Button */}
           <div className="flex items-center flex-1 h-full">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
@@ -200,6 +202,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
         </div>
+        </div>
+
+        {/* Sale Banner goes right under the main nav bar */}
+        <SaleBanner isOpaque={isOpaque} />
 
         {/* MEGA MENU: MEN */}
         {openMenu === 'men' && (

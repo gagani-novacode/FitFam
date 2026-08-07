@@ -17,7 +17,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onAddToCart,
   portrait = false,
 }) => {
-  const { name, price, originalPrice, image, images, isNew, isSale, badge, sizes } = product;
+  const { name, price, originalPrice, salePrice, image, images, isNew, isSale, badge, sizes } = product;
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   const hoverImage = images && images.length > 1 ? images[1] : null;
@@ -69,13 +69,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
           {/* Price — hidden on hover on desktop */}
           <div className="flex items-baseline justify-center gap-2 md:group-hover:hidden">
-            <span className="font-chakra font-normal text-[12px] text-gray-700 tracking-wider">
-              {formatPrice(price)}
-            </span>
-            {originalPrice && (
-              <span className="font-chakra text-[11px] text-gray-400 line-through">
-                {formatPrice(originalPrice)}
-              </span>
+            {salePrice !== undefined ? (
+              <>
+                <span className="font-chakra font-normal text-[12px] text-[#E5003B] tracking-wider font-semibold">
+                  {formatPrice(salePrice)}
+                </span>
+                <span className="font-chakra text-[11px] text-gray-400 line-through">
+                  {formatPrice(price)}
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="font-chakra font-normal text-[12px] text-gray-700 tracking-wider">
+                  {formatPrice(price)}
+                </span>
+                {originalPrice && (
+                  <span className="font-chakra text-[11px] text-gray-400 line-through">
+                    {formatPrice(originalPrice)}
+                  </span>
+                )}
+              </>
             )}
           </div>
 

@@ -8,12 +8,13 @@ import { Button } from '../components/ui/Button';
 interface CartItem {
     product: Product;
     quantity: number;
+    size: string;
 }
 
 interface CartPageProps {
     cartItems: CartItem[];
-    onRemoveFromCart: (productId: string) => void;
-    onUpdateQuantity: (productId: string, quantity: number) => void;
+    onRemoveFromCart: (productId: string, size?: string) => void;
+    onUpdateQuantity: (productId: string, quantity: number, size?: string) => void;
     onOpenCheckout: () => void;
 }
 
@@ -32,8 +33,11 @@ export const CartPage: React.FC<CartPageProps> = ({
     const formatPrice = (value: number) =>
         `රු ${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
-    const subtotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-    const deliveryFee = 350;
+    const subtotal = cartItems.reduce((sum, item) => {
+        const priceToUse = item.product.salePrice !== undefined ? item.product.salePrice : item.product.price;
+        return sum + priceToUse * item.quantity;
+    }, 0);
+    const deliveryFee = 500;
     const total = subtotal + deliveryFee;
 
     return (
@@ -100,8 +104,8 @@ export const CartPage: React.FC<CartPageProps> = ({
 
                             {/* Items */}
                             <div className="divide-y divide-gray-100">
-                                {cartItems.map(({ product, quantity }) => (
-                                    <div key={product.id} className="py-6 flex gap-4 items-start">
+                                {cartItems.map(({ product, quantity, size }) => (
+                                    <div key={`${product.id}-${size}`} className="py-6 flex gap-4 items-start">
 
                                         {/* Image */}
                                         <div
@@ -118,14 +122,30 @@ export const CartPage: React.FC<CartPageProps> = ({
                                                     {product.category}
                                                 </p>
                                                 <h3
-                                                    className="font-chakra text-sm font-semibold text-[#111111] tracking-wide line-clamp-2 cursor-pointer hover:underline mb-1"
+                                                    className="font-chakra text-sm font-semibold text-[#111111] tracking-wide line-clamp-2 cursor-pointer hover:underline mb-0.5"
                                                     onClick={() => navigate(`/product/${product.id}`)}
                                                 >
                                                     {product.name}
                                                 </h3>
-                                                <p className="font-chakra text-xs text-[#555555] tracking-wide">
-                                                    {formatPrice(product.price)} each
+                                                <p className="font-chakra text-[11px] uppercase tracking-widest text-[#D4AF37] font-semibold mb-1">
+                                                    Size: {size}
                                                 </p>
+                                                <div className="flex gap-2">
+                                                    {product.salePrice !== undefined ? (
+                                                        <>
+                                                            <p className="font-chakra text-xs text-[#E5003B] font-semibold tracking-wide">
+                                                                {formatPrice(product.salePrice)} each
+                                                            </p>
+                                                            <p className="font-chakra text-[11px] text-gray-400 line-through tracking-wide mt-0.5">
+                                                                {formatPrice(product.price)}
+                                                            </p>
+                                                        </>
+                                                    ) : (
+                                                        <p className="font-chakra text-xs text-[#555555] tracking-wide">
+                                                            {formatPrice(product.price)} each
+                                                        </p>
+                                                    )}
+                                                </div>
                                             </div>
 
                                             {/* Qty + total + remove */}
@@ -135,8 +155,8 @@ export const CartPage: React.FC<CartPageProps> = ({
                                                 <div className="flex items-center border border-gray-200">
                                                     <button
                                                         onClick={() => {
-                                                            if (quantity > 1) onUpdateQuantity(product.id, quantity - 1);
-                                                            else onRemoveFromCart(product.id);
+                                                            if (quantity > 1) onUpdateQuantity(product.id, quantity - 1, size);
+                                                            else onRemoveFromCart(product.id, size);
                                                         }}
                                                         className="w-8 h-8 flex items-center justify-center text-[#555555] hover:bg-gray-50 transition-colors cursor-pointer"
                                                     >
@@ -146,7 +166,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                                                         {quantity}
                                                     </span>
                                                     <button
-                                                        onClick={() => onUpdateQuantity(product.id, quantity + 1)}
+                                                        onClick={() => onUpdateQuantity(product.id, quantity + 1, size)}
                                                         className="w-8 h-8 flex items-center justify-center text-[#555555] hover:bg-gray-50 transition-colors cursor-pointer"
                                                     >
                                                         <Plus className="w-3 h-3" />
@@ -154,13 +174,13 @@ export const CartPage: React.FC<CartPageProps> = ({
                                                 </div>
 
                                                 {/* Line total */}
-                                                <span className="font-chakra text-sm font-bold text-[#111111] w-24 text-right tracking-wide">
-                                                    {formatPrice(product.price * quantity)}
-                                                </span>
+                                                <p className="font-chakra text-sm sm:w-24 sm:text-right font-bold text-[#111111]">
+                                                    {formatPrice((product.salePrice !== undefined ? product.salePrice : product.price) * quantity)}
+                                                </p>
 
                                                 {/* Remove */}
                                                 <button
-                                                    onClick={() => onRemoveFromCart(product.id)}
+                                                    onClick={() => onRemoveFromCart(product.id, size)}
                                                     className="text-gray-300 hover:text-red-500 transition-colors cursor-pointer"
                                                     title="Remove"
                                                 >

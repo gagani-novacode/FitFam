@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronRight, Share2, ShoppingBag, X, Ruler, Plus, Minus } from 'lucide-react';
+import { ChevronRight, Share2, ShoppingBag, X, Ruler, Plus, Minus, Zap } from 'lucide-react';
 import { Product } from '../data/products';
 import { ProductCard } from '../components/ui/ProductCard';
 import { Footer } from '../components/layout/Footer';
@@ -160,8 +160,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
     const product = products.find((p) => p.id === id);
 
-    const [selectedSize, setSelectedSize] = useState<string>('M');
-    const [activeTab, setActiveTab] = useState<Tab>('description');
+    const [selectedSize, setSelectedSize] = useState<string>(
+        product?.sizes?.[0] ?? 'M'
+    ); const [activeTab, setActiveTab] = useState<Tab>('description');
     const [qty, setQty] = useState(1);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
@@ -290,13 +291,26 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
                         {/* Price */}
                         <div className="flex items-baseline gap-3">
-                            <span className="font-chakra text-lg text-[#111111]">
-                                Rs {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })} LKR
-                            </span>
-                            {product.originalPrice && (
-                                <span className="font-chakra text-sm text-gray-400 line-through">
-                                    Rs {product.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })} LKR
-                                </span>
+                            {product.salePrice !== undefined ? (
+                                <>
+                                    <span className="font-chakra text-lg text-[#E5003B] font-semibold">
+                                        Rs {product.salePrice.toLocaleString('en-US', { minimumFractionDigits: 2 })} LKR
+                                    </span>
+                                    <span className="font-chakra text-sm text-gray-400 line-through">
+                                        Rs {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })} LKR
+                                    </span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="font-chakra text-lg text-[#111111]">
+                                        Rs {product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })} LKR
+                                    </span>
+                                    {product.originalPrice && (
+                                        <span className="font-chakra text-sm text-gray-400 line-through">
+                                            Rs {product.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })} LKR
+                                        </span>
+                                    )}
+                                </>
                             )}
                         </div>
 
@@ -343,6 +357,24 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                                 className="w-full h-12 bg-[#262626] hover:bg-black text-white font-chakra text-[11px] uppercase tracking-[0.25em] transition-colors duration-200 cursor-pointer flex items-center justify-center gap-2"
                             >
                                 Add To Cart
+                            </button>
+
+                            {/* Buy Now — skips cart, goes straight to checkout */}
+                            <button
+                                onClick={() => {
+                                    navigate('/checkout', {
+                                        state: {
+                                            buyNowItems: [{
+                                                product,
+                                                quantity: qty,
+                                                size: selectedSize,
+                                            }],
+                                        },
+                                    });
+                                }}
+                                className="w-full h-12 bg-white border-2 border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white font-chakra text-[11px] uppercase tracking-[0.25em] transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 group"
+                            >
+                                Buy Now
                             </button>
 
                             <button

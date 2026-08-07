@@ -4,6 +4,9 @@ export interface Product {
   category: 'Men' | 'Women' | 'Accessories';
   price: number;
   originalPrice?: number;
+  salePrice?: number;
+  saleDiscountAmount?: number;
+  saleName?: string;
   image: string;
   images?: string[];
   isNew?: boolean;

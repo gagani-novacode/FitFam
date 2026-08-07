@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronRight, Loader2, AlertCircle } from 'lucide-react';
 import { Product } from '../data/products';
 import { api } from '../lib/api';
@@ -98,6 +98,12 @@ const inputCls =
 // ── Main Component ────────────────────────────────────────────────────────
 export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCart }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // If navigated here via "Buy Now", use those items instead of the real cart
+  const buyNowItems: CartItem[] | undefined = (location.state as any)?.buyNowItems;
+  const isBuyNow = !!(buyNowItems && buyNowItems.length > 0);
+  const effectiveCartItems = isBuyNow ? buyNowItems! : cartItems;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -138,22 +144,56 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
   const [pendingOrderRef, setPendingOrderRef] = useState<string | null>(null);
   const [snapshotItems, setSnapshotItems] = useState<CartItem[]>([]);
   const [returnedFromPayHere, setReturnedFromPayHere] = useState(false);
+  
+  const [discountCodeInput, setDiscountCodeInput] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; percentage: number } | null>(null);
+  const [discountError, setDiscountError] = useState<string | null>(null);
+  const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
 
-  const displayItems = snapshotItems.length > 0 ? snapshotItems : cartItems;
-  const cartSubtotal = displayItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
-  const deliveryFee = 500;
-  const orderTotal = cartSubtotal + deliveryFee;
+  const displayItems = snapshotItems.length > 0 ? snapshotItems : effectiveCartItems;
+  const cartSubtotal = displayItems.reduce((acc, item) => {
+    const priceToUse = item.product.salePrice !== undefined ? item.product.salePrice : item.product.price;
+    return acc + priceToUse * item.quantity;
+  }, 0);
+  const deliveryFee = displayItems.length > 0 ? 500 : 0;
+  
+  const discountAmount = appliedDiscount ? Math.round(cartSubtotal * (appliedDiscount.percentage / 100)) : 0;
+  const orderTotal = cartSubtotal - discountAmount + deliveryFee;
+
+  const handleApplyDiscount = async () => {
+    setDiscountError(null);
+    if (!discountCodeInput) return;
+    setIsApplyingDiscount(true);
+    try {
+      const res = await api.get(`/store/cart/discount/validate/${discountCodeInput}`);
+      if (res.data.ok) {
+        setAppliedDiscount({ code: discountCodeInput.toUpperCase(), percentage: res.data.percentage });
+      } else {
+        setDiscountError(res.data.error || 'Invalid code');
+      }
+    } catch (err: any) {
+      setDiscountError(err.response?.data?.error || 'Failed to validate code');
+    } finally {
+      setIsApplyingDiscount(false);
+    }
+  };
+
+  const handleRemoveDiscount = () => {
+    setAppliedDiscount(null);
+    setDiscountCodeInput('');
+    setDiscountError(null);
+  };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
-    setSnapshotItems(cartItems);
+    setSnapshotItems(effectiveCartItems);
 
     if (!billingDetails.firstName || !billingDetails.lastName || !billingDetails.address || !billingDetails.phone || !billingDetails.email) {
       setErrorMessage('Please fill in all mandatory billing details.');
       return;
     }
-    if (cartItems.length === 0) {
+    if (effectiveCartItems.length === 0) {
       setErrorMessage('Your cart is empty.');
       return;
     }
@@ -164,12 +204,19 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
       const cartRes = await api.get('/store/cart');
       const { orderRef } = cartRes.data.cart;
 
-      for (const item of cartItems) {
+      for (const item of effectiveCartItems) {
         await api.post('/store/cart/add', {
           orderRef,
           productId: item.product.id,
           size: item.size,
           qty: item.quantity,
+        });
+      }
+
+      if (appliedDiscount) {
+        await api.post('/store/cart/discount/apply', {
+          orderRef,
+          code: appliedDiscount.code,
         });
       }
 
@@ -192,14 +239,23 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
       }
 
       localStorage.setItem('fitfam_pending_orderRef', orderRef);
+      console.log("--- TEST LOG: PAYHERE ORDER REFERENCE IS:", orderRef);
 
       if (paymentMethod === 'payhere') {
         const payRes = await api.post('/payhere/store/checkout', { orderRef });
         if (!payRes.data.ok) {
           throw new Error(payRes.data.error || 'Could not initialize PayHere payment.');
         }
-        localStorage.setItem('fitfam_clear_cart_on_success', '1');
-        submitPayHereForm(payRes.data.payment);
+        if (!isBuyNow) {
+          localStorage.setItem('fitfam_clear_cart_on_success', '1');
+        }
+        
+        // For local testing, bypass real PayHere redirect since webhooks might fail over tunnels
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          navigate(`/payment/mock?orderRef=${orderRef}&amount=${orderTotal}&currency=LKR`);
+        } else {
+          submitPayHereForm(payRes.data.payment);
+        }
       } else if (paymentMethod === 'koko') {
         setPendingOrderRef(orderRef);
         setIsProcessing(false);
@@ -377,20 +433,6 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
               />
             </div>
 
-            <div className="pt-1">
-              <label className="flex items-center gap-2.5 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={shipDifferent}
-                  onChange={(e) => setShipDifferent(e.target.checked)}
-                  className="w-3.5 h-3.5 border-gray-400 rounded-none accent-[#111111] cursor-pointer"
-                />
-                <span className="font-chakra font-normal text-[10px] uppercase tracking-[0.25em] text-gray-500 group-hover:text-[#111111] transition-colors">
-                  Ship to a different address?
-                </span>
-              </label>
-            </div>
-
             <div>
               <label className="block font-chakra font-normal text-[10px] uppercase tracking-[0.25em] text-gray-500 mb-1.5">
                 Order notes <span className="normal-case tracking-normal text-gray-400">(optional)</span>
@@ -412,6 +454,44 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
               Your order
             </h2>
 
+            {/* Discount Code */}
+            <div className="mb-6 p-4 border border-gray-200 bg-white">
+              <label className="block font-chakra font-normal text-[10px] uppercase tracking-[0.25em] text-gray-500 mb-2">
+                Discount Code
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={discountCodeInput}
+                  onChange={(e) => setDiscountCodeInput(e.target.value.toUpperCase())}
+                  disabled={!!appliedDiscount || isApplyingDiscount}
+                  placeholder="ENTER CODE"
+                  className={`${inputCls} !py-2 !uppercase !text-xs w-full`}
+                />
+                {!appliedDiscount ? (
+                  <button
+                    type="button"
+                    onClick={handleApplyDiscount}
+                    disabled={!discountCodeInput || isApplyingDiscount}
+                    className="bg-[#111111] text-white px-5 font-chakra text-[10px] uppercase tracking-[0.2em] transition-colors hover:bg-gray-800 disabled:opacity-50 whitespace-nowrap"
+                  >
+                    {isApplyingDiscount ? '...' : 'Apply'}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleRemoveDiscount}
+                    disabled={isApplyingDiscount}
+                    className="border border-red-500 text-red-500 px-4 font-chakra text-[10px] uppercase tracking-[0.2em] hover:bg-red-50 disabled:opacity-50 whitespace-nowrap"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+              {discountError && <p className="text-red-500 text-[10px] font-chakra mt-2">{discountError}</p>}
+              {appliedDiscount && <p className="text-green-600 text-[10px] font-chakra mt-2 uppercase tracking-wide">Code applied successfully!</p>}
+            </div>
+
             {/* Order table */}
             <div className="border border-gray-200 mb-6">
               <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
@@ -420,13 +500,13 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
               </div>
 
               <div className="px-4 py-3 border-b border-gray-200 space-y-2.5">
-                {(snapshotItems.length > 0 ? snapshotItems : cartItems).map((item, idx) => (
+                {(snapshotItems.length > 0 ? snapshotItems : effectiveCartItems).map((item, idx) => (
                   <div key={idx} className="flex justify-between items-center">
                     <span className="font-chakra font-normal text-[12px] text-gray-600 pr-4">
                       {item.product.name} — {item.size} × {item.quantity}
                     </span>
                     <span className="font-chakra font-normal text-[12px] text-[#111111] whitespace-nowrap">
-                      රු{(item.product.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      රු{((item.product.salePrice !== undefined ? item.product.salePrice : item.product.price) * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </span>
                   </div>
                 ))}
@@ -438,6 +518,17 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
                   රු{cartSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </span>
               </div>
+
+              {appliedDiscount && (
+                <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200 bg-gray-50">
+                  <span className="font-chakra font-normal text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                    Discount ({appliedDiscount.percentage}%)
+                  </span>
+                  <span className="font-chakra font-normal text-[12px] text-[#E5003B]">
+                    -රු{discountAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+              )}
 
               <div className="px-4 py-3 border-b border-gray-200">
                 <span className="font-chakra font-normal text-[10px] uppercase tracking-[0.25em] text-gray-500 block mb-2">Shipment</span>
@@ -536,7 +627,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
             {/* Place Order Button — border style matching the site */}
             <button
               type="submit"
-              disabled={isProcessing || (cartItems.length === 0 && snapshotItems.length === 0)}
+              disabled={isProcessing || (effectiveCartItems.length === 0 && snapshotItems.length === 0)}
               className="w-full border border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed py-3.5 font-chakra font-normal text-[11px] uppercase tracking-[0.3em] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2"
             >
               {isProcessing ? (
@@ -563,9 +654,20 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ cartItems, onClearCa
           <KokoMockModal
             orderRef={pendingOrderRef!}
             total={orderTotal}
-            onConfirm={() => {
+            onConfirm={async () => {
               setShowKokoMock(false);
-              if (onClearCart) onClearCart();
+              try {
+                await api.post('/store/payment/confirm', {
+                  orderRef: pendingOrderRef,
+                  paymentDetails: {
+                    method: 'MOCK_KOKO',
+                    id: `MOCK-KOKO-${Date.now()}`,
+                  },
+                });
+              } catch (err) {
+                console.error("Failed to mark mock Koko payment as paid:", err);
+              }
+              if (onClearCart && !isBuyNow) onClearCart();
               localStorage.setItem('fitfam_payment_method', 'koko_mock');
               navigate('/order-success');
             }}
