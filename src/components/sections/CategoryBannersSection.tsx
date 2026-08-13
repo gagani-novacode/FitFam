@@ -14,8 +14,8 @@ const banners = [
     label: 'Tops',
     image: menImage,
     buttons: [
-      { label: 'Men', path: '/category/men/DRY-FIT%20T%20Shirt' },
-      { label: 'Women', path: '/category/women/Crop%20Tops' },
+      { label: 'Men', path: '/category/Men?clothingType=Tops' },
+      { label: 'Women', path: '/category/Women?clothingType=Tops' },
     ],
   },
   {
@@ -23,8 +23,8 @@ const banners = [
     label: 'Bottoms',
     image: womenImage,
     buttons: [
-      { label: 'Men', path: '/category/men/Short' },
-      { label: 'Women', path: '/category/women/Shorts' },
+      { label: 'Men', path: '/category/Men?clothingType=Bottoms' },
+      { label: 'Women', path: '/category/Women?clothingType=Bottoms' },
     ],
   },
   {
@@ -32,7 +32,7 @@ const banners = [
     label: 'Accessories',
     image: accessoriesImage,
     buttons: [
-      { label: 'Accessories', path: '/category/accessories' },
+      { label: 'Accessories', path: '/category/Accessories' },
     ],
   },
 ];

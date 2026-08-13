@@ -45,7 +45,7 @@ export const PickYourCategorySection: React.FC = () => {
           <Button
             variant="hero"
             size="md"
-            onClick={() => navigate('/category/men/CAMOSERIES')}
+            onClick={() => navigate('/category/men/CAMO')}
           >
             Shop Now
           </Button>

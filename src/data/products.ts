@@ -2,6 +2,7 @@ export interface Product {
   id: string;
   name: string;
   category: 'Men' | 'Women' | 'Accessories';
+  clothingType?: 'Tops' | 'Bottoms';
   price: number;
   originalPrice?: number;
   salePrice?: number;

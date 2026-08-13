@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { ChevronRight, ShoppingBag } from 'lucide-react';
 import { ProductCard } from '../components/ui/ProductCard';
 import { Product } from '../data/products';
@@ -36,6 +36,8 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
 }) => {
   const { categoryId, subCategory } = useParams<{ categoryId: string; subCategory?: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const clothingType = searchParams.get('clothingType');
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -66,7 +68,8 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
 
   const categoryProducts = products.filter((p) => {
     const matchesCategory = p.category === meta.productKey;
-    if (!decodedSubCategory) return matchesCategory;
+    const matchesClothing = !clothingType || (p as any).clothingType === clothingType;
+    if (!decodedSubCategory) return matchesCategory && matchesClothing;
 
     const productSub: string = ((p as any).subCategory ?? '').toLowerCase();
     const filterSub = decodedSubCategory.toLowerCase();
@@ -77,16 +80,18 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
         ? productSub.startsWith('camo')
         : productSub === filterSub;
 
-    return matchesCategory && matchesSubCategory;
+    return matchesCategory && matchesClothing && matchesSubCategory;
   });
 
   // Display 'Camo Series' as the page title when the filter is the overview
   const pageTitle =
     !decodedSubCategory
-      ? meta.label
+      ? clothingType
+        ? `${meta.label} ${clothingType}`  // e.g. "Men Tops", "Women Bottoms"
+        : meta.label
       : decodedSubCategory.toLowerCase() === 'camo'
-      ? 'Camo Series'
-      : decodedSubCategory;
+        ? 'Camo Series'
+        : decodedSubCategory;
 
   return (
     <div className="min-h-screen bg-white flex flex-col">

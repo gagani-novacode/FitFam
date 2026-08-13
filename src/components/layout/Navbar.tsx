@@ -76,132 +76,132 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="w-full px-4 md:px-6 lg:px-10 flex items-center h-16 relative">
 
             {/* LEFT: Navigation Links & Mobile Menu Button */}
-          <div className="flex items-center flex-1 h-full">
-            <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className={`md:hidden p-1 mr-3 transition-colors cursor-pointer ${isOpaque ? 'text-gray-900' : 'text-white'}`}
-              aria-label="Open Menu"
-            >
-              <div className="flex flex-col justify-center gap-1.5 w-5">
-                <span className={`h-0.5 w-5 transition-transform ${isOpaque ? 'bg-gray-900' : 'bg-white'}`} />
-                <span className={`h-0.5 w-3.5 transition-transform ${isOpaque ? 'bg-gray-900' : 'bg-white'}`} />
-                <span className={`h-0.5 w-4.5 transition-transform ${isOpaque ? 'bg-gray-900' : 'bg-white'}`} />
-              </div>
-            </button>
+            <div className="flex items-center flex-1 h-full">
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className={`md:hidden p-1 mr-3 transition-colors cursor-pointer ${isOpaque ? 'text-gray-900' : 'text-white'}`}
+                aria-label="Open Menu"
+              >
+                <div className="flex flex-col justify-center gap-1.5 w-5">
+                  <span className={`h-0.5 w-5 transition-transform ${isOpaque ? 'bg-gray-900' : 'bg-white'}`} />
+                  <span className={`h-0.5 w-3.5 transition-transform ${isOpaque ? 'bg-gray-900' : 'bg-white'}`} />
+                  <span className={`h-0.5 w-4.5 transition-transform ${isOpaque ? 'bg-gray-900' : 'bg-white'}`} />
+                </div>
+              </button>
 
-            <nav className="hidden md:flex items-center space-x-8 h-full">
-              {/* Men */}
-              <div className="relative h-full flex items-center">
-                <button
-                  onMouseEnter={() => setOpenMenu('men')}
-                  className={`relative text-[13px] font-chakra font-normal tracking-[0.2em] uppercase transition-colors py-2 cursor-pointer ${isOpaque ? 'text-gray-900 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
-                >
-                  Men
-                  <span className={`absolute bottom-0 left-0 h-[1.5px] bg-[#D4AF37] transition-all duration-300 ${openMenu === 'men' ? 'w-full' : 'w-0'}`} />
-                </button>
-              </div>
+              <nav className="hidden md:flex items-center space-x-8 h-full">
+                {/* Men */}
+                <div className="relative h-full flex items-center">
+                  <button
+                    onMouseEnter={() => setOpenMenu('men')}
+                    className={`relative text-[13px] font-chakra font-normal tracking-[0.2em] uppercase transition-colors py-2 cursor-pointer ${isOpaque ? 'text-gray-900 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
+                  >
+                    Men
+                    <span className={`absolute bottom-0 left-0 h-[1.5px] bg-[#D4AF37] transition-all duration-300 ${openMenu === 'men' ? 'w-full' : 'w-0'}`} />
+                  </button>
+                </div>
 
-              {/* Women */}
-              <div className="relative h-full flex items-center">
-                <button
-                  onMouseEnter={() => setOpenMenu('women')}
-                  className={`relative text-[13px] font-chakra font-normal tracking-[0.2em] uppercase transition-colors py-2 cursor-pointer ${isOpaque ? 'text-gray-900 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
-                >
-                  Women
-                  <span className={`absolute bottom-0 left-0 h-[1.5px] bg-[#D4AF37] transition-all duration-300 ${openMenu === 'women' ? 'w-full' : 'w-0'}`} />
-                </button>
-              </div>
+                {/* Women */}
+                <div className="relative h-full flex items-center">
+                  <button
+                    onMouseEnter={() => setOpenMenu('women')}
+                    className={`relative text-[13px] font-chakra font-normal tracking-[0.2em] uppercase transition-colors py-2 cursor-pointer ${isOpaque ? 'text-gray-900 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
+                  >
+                    Women
+                    <span className={`absolute bottom-0 left-0 h-[1.5px] bg-[#D4AF37] transition-all duration-300 ${openMenu === 'women' ? 'w-full' : 'w-0'}`} />
+                  </button>
+                </div>
 
-              {/* Accessories */}
-              <div className="relative h-full flex items-center group">
-                <Link
-                  to="/category/accessories"
-                  onMouseEnter={() => setOpenMenu(null)}
-                  className={`relative text-[13px] font-chakra font-normal tracking-[0.2em] uppercase transition-colors py-2 ${isOpaque ? 'text-gray-900 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
-                >
-                  Accessories
-                  <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
-                </Link>
-              </div>
-            </nav>
-          </div>
+                {/* Accessories */}
+                <div className="relative h-full flex items-center group">
+                  <Link
+                    to="/category/accessories"
+                    onMouseEnter={() => setOpenMenu(null)}
+                    className={`relative text-[13px] font-chakra font-normal tracking-[0.2em] uppercase transition-colors py-2 ${isOpaque ? 'text-gray-900 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
+                  >
+                    Accessories
+                    <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
+                  </Link>
+                </div>
+              </nav>
+            </div>
 
-          {/* CENTER: Brand Logo */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex items-center">
-            <Link to="/" onClick={() => setActiveCategory('all')} className="flex items-center gap-1.5 md:gap-3 group cursor-pointer">
-              <div className="flex flex-col justify-center">
-                <div className={`w-4 md:w-6 h-[2px] md:h-[3px] mb-1 md:mb-1.5 transition-colors [clip-path:polygon(0_0,100%_0,calc(100%-5px)_100%,0_100%)] ${isOpaque ? 'bg-[#111111]' : 'bg-white'}`}></div>
-                <div className={`w-3 md:w-4 h-[2px] md:h-[3px] mb-1 md:mb-1.5 transition-colors [clip-path:polygon(0_0,100%_0,calc(100%-5px)_100%,0_100%)] ${isOpaque ? 'bg-[#111111]' : 'bg-white'}`}></div>
-                <div className={`w-2 md:w-2.5 h-[2px] md:h-[3px] transition-colors [clip-path:polygon(0_0,100%_0,calc(100%-5px)_100%,0_100%)] ${isOpaque ? 'bg-[#111111]' : 'bg-white'}`}></div>
-              </div>
-              <div className="flex flex-col leading-none">
-                <span className={`font-chakra text-[16px] md:text-[28px] tracking-[0.2em] md:tracking-[0.4em] font-bold transition-colors ${isOpaque ? 'text-[#111111]' : 'text-white'}`}>
-                  FITFAM
-                </span>
-                <span className={`font-chakra text-[7px] md:text-[10px] tracking-[0.4em] md:tracking-[0.8em] font-normal uppercase transition-colors mt-0.5 md:mt-1 ${isOpaque ? 'text-[#888888]' : 'text-white/70'}`}>
-                  ACTIVE
-                </span>
-              </div>
-            </Link>
-          </div>
-
-          {/* RIGHT: Icon Actions */}
-          <div className="flex items-center space-x-3 md:space-x-5 ml-auto">
-            {/* Direct Navigation: Account */}
-            <button
-              onClick={() => navigate('/account')}
-              className={`relative group flex flex-col items-center gap-0.5 transition-colors cursor-pointer ${isOpaque ? 'text-gray-800 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
-            >
-              <User className="w-[16px] h-[16px] stroke-[1.5]" />
-              <span className="hidden md:inline text-[9px] font-chakra font-normal tracking-[0.15em] uppercase">Account</span>
-              <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
-            </button>
-
-            {/* Direct Navigation: Wishlist */}
-            <button
-              onClick={() => navigate('/wishlist')}
-              className={`relative group flex flex-col items-center gap-0.5 transition-colors cursor-pointer ${isOpaque ? 'text-gray-800 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
-            >
-              <div className="relative">
-                <Heart className="w-[16px] h-[16px] stroke-[1.5]" />
-                {wishlistItems.length > 0 && (
-                  <span className="absolute -top-1 -right-2 w-3 h-3 bg-[#D4AF37] text-white rounded-full text-[7px] font-bold flex items-center justify-center font-mono">
-                    {wishlistItems.length}
+            {/* CENTER: Brand Logo */}
+            <div className="absolute left-1/2 -translate-x-1/2 flex items-center">
+              <Link to="/" onClick={() => setActiveCategory('all')} className="flex items-center gap-1.5 md:gap-3 group cursor-pointer">
+                <div className="flex flex-col justify-center">
+                  <div className={`w-4 md:w-6 h-[2px] md:h-[3px] mb-1 md:mb-1.5 transition-colors [clip-path:polygon(0_0,100%_0,calc(100%-5px)_100%,0_100%)] ${isOpaque ? 'bg-[#111111]' : 'bg-white'}`}></div>
+                  <div className={`w-3 md:w-4 h-[2px] md:h-[3px] mb-1 md:mb-1.5 transition-colors [clip-path:polygon(0_0,100%_0,calc(100%-5px)_100%,0_100%)] ${isOpaque ? 'bg-[#111111]' : 'bg-white'}`}></div>
+                  <div className={`w-2 md:w-2.5 h-[2px] md:h-[3px] transition-colors [clip-path:polygon(0_0,100%_0,calc(100%-5px)_100%,0_100%)] ${isOpaque ? 'bg-[#111111]' : 'bg-white'}`}></div>
+                </div>
+                <div className="flex flex-col leading-none">
+                  <span className={`font-chakra text-[16px] md:text-[28px] tracking-[0.2em] md:tracking-[0.4em] font-bold transition-colors ${isOpaque ? 'text-[#111111]' : 'text-white'}`}>
+                    FITFAM
                   </span>
-                )}
-              </div>
-              <span className="hidden md:inline text-[9px] font-chakra font-normal tracking-[0.15em] uppercase">Wishlist</span>
-              <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
-            </button>
-
-            {/* Search Toggle */}
-            <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className={`relative group flex flex-col items-center gap-0.5 transition-colors cursor-pointer ${isOpaque ? 'text-gray-800 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
-            >
-              <Search className="w-[16px] h-[16px] stroke-[1.5]" />
-              <span className="hidden md:inline text-[9px] font-chakra font-normal tracking-[0.15em] uppercase">Search</span>
-              <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
-            </button>
-
-            {/* Direct Navigation: Cart */}
-            <button
-              onClick={() => navigate('/cart')}
-              className={`relative group flex flex-col items-center gap-0.5 transition-colors cursor-pointer ${isOpaque ? 'text-gray-800 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
-            >
-              <div className="relative">
-                <ShoppingBag className="w-[16px] h-[16px] stroke-[1.5]" />
-                {totalCartCount > 0 && (
-                  <span className="absolute -top-1 -right-2 w-3 h-3 bg-[#D4AF37] text-white rounded-full text-[7px] font-bold flex items-center justify-center font-mono">
-                    {totalCartCount}
+                  <span className={`font-chakra text-[7px] md:text-[10px] tracking-[0.4em] md:tracking-[0.8em] font-normal uppercase transition-colors mt-0.5 md:mt-1 ${isOpaque ? 'text-[#888888]' : 'text-white/70'}`}>
+                    ACTIVE
                   </span>
-                )}
-              </div>
-              <span className="hidden md:inline text-[9px] font-chakra font-normal tracking-[0.15em] uppercase">Cart</span>
-              <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
-            </button>
+                </div>
+              </Link>
+            </div>
+
+            {/* RIGHT: Icon Actions */}
+            <div className="flex items-center space-x-3 md:space-x-5 ml-auto">
+              {/* Direct Navigation: Account */}
+              <button
+                onClick={() => navigate('/account')}
+                className={`relative group flex flex-col items-center gap-0.5 transition-colors cursor-pointer ${isOpaque ? 'text-gray-800 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
+              >
+                <User className="w-[16px] h-[16px] stroke-[1.5]" />
+                <span className="hidden md:inline text-[9px] font-chakra font-normal tracking-[0.15em] uppercase">Account</span>
+                <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
+              </button>
+
+              {/* Direct Navigation: Wishlist */}
+              <button
+                onClick={() => navigate('/wishlist')}
+                className={`relative group flex flex-col items-center gap-0.5 transition-colors cursor-pointer ${isOpaque ? 'text-gray-800 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
+              >
+                <div className="relative">
+                  <Heart className="w-[16px] h-[16px] stroke-[1.5]" />
+                  {wishlistItems.length > 0 && (
+                    <span className="absolute -top-1 -right-2 w-3 h-3 bg-[#D4AF37] text-white rounded-full text-[7px] font-bold flex items-center justify-center font-mono">
+                      {wishlistItems.length}
+                    </span>
+                  )}
+                </div>
+                <span className="hidden md:inline text-[9px] font-chakra font-normal tracking-[0.15em] uppercase">Wishlist</span>
+                <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
+              </button>
+
+              {/* Search Toggle */}
+              <button
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                className={`relative group flex flex-col items-center gap-0.5 transition-colors cursor-pointer ${isOpaque ? 'text-gray-800 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
+              >
+                <Search className="w-[16px] h-[16px] stroke-[1.5]" />
+                <span className="hidden md:inline text-[9px] font-chakra font-normal tracking-[0.15em] uppercase">Search</span>
+                <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
+              </button>
+
+              {/* Direct Navigation: Cart */}
+              <button
+                onClick={() => navigate('/cart')}
+                className={`relative group flex flex-col items-center gap-0.5 transition-colors cursor-pointer ${isOpaque ? 'text-gray-800 hover:text-[#D4AF37]' : 'text-white hover:text-[#D4AF37]'}`}
+              >
+                <div className="relative">
+                  <ShoppingBag className="w-[16px] h-[16px] stroke-[1.5]" />
+                  {totalCartCount > 0 && (
+                    <span className="absolute -top-1 -right-2 w-3 h-3 bg-[#D4AF37] text-white rounded-full text-[7px] font-bold flex items-center justify-center font-mono">
+                      {totalCartCount}
+                    </span>
+                  )}
+                </div>
+                <span className="hidden md:inline text-[9px] font-chakra font-normal tracking-[0.15em] uppercase">Cart</span>
+                <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
+              </button>
+            </div>
           </div>
-        </div>
         </div>
 
         {/* Sale Banner goes right under the main nav bar */}
@@ -227,7 +227,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
               <div className="flex flex-col gap-2 min-w-[140px]">
                 <span className="text-[10px] font-chakra font-semibold tracking-[0.2em] text-gray-400 uppercase pb-2 border-b border-gray-100">Bottoms</span>
-                <Link to="/category/men/Short" onClick={() => setOpenMenu(null)} className="text-[12px] font-chakra font-normal uppercase text-gray-700 hover:text-[#D4AF37] tracking-wider transition-colors py-0.5">Shorts</Link>
+                <Link to="/category/Men?clothingType=Bottoms" onClick={() => setOpenMenu(null)} className="text-[12px] font-chakra font-normal uppercase text-gray-700 hover:text-[#D4AF37] tracking-wider transition-colors py-0.5">Shorts</Link>
                 <Link to="/category/men/Pants" onClick={() => setOpenMenu(null)} className="text-[12px] font-chakra font-normal uppercase text-gray-700 hover:text-[#D4AF37] tracking-wider transition-colors py-0.5">Pants</Link>
                 <Link to="/category/men/CAMO%20Premium%20Shorts" onClick={() => setOpenMenu(null)} className="text-[12px] font-chakra font-normal uppercase text-gray-700 hover:text-[#D4AF37] tracking-wider transition-colors py-0.5">Camo Premium Shorts</Link>
                 <Link to="/category/men/CAMO%20Squat%20Short" onClick={() => setOpenMenu(null)} className="text-[12px] font-chakra font-normal uppercase text-gray-700 hover:text-[#D4AF37] tracking-wider transition-colors py-0.5">Camo Squat Shorts</Link>
@@ -323,7 +323,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <Link to="/category/men/CAMO" onClick={() => setIsMobileMenuOpen(false)} className="text-[13px] uppercase text-gray-800 hover:text-[#D4AF37] tracking-wider transition-colors">Camo Series</Link>
                 <Link to="/category/men/DRY-FIT%20T%20Shirt" onClick={() => setIsMobileMenuOpen(false)} className="text-[13px] uppercase text-gray-800 hover:text-[#D4AF37] tracking-wider transition-colors">Dry-Fit T-Shirts</Link>
                 <Link to="/category/men/Oversize" onClick={() => setIsMobileMenuOpen(false)} className="text-[13px] uppercase text-gray-800 hover:text-[#D4AF37] tracking-wider transition-colors">Oversize</Link>
-                <Link to="/category/men/Short" onClick={() => setIsMobileMenuOpen(false)} className="text-[13px] uppercase text-gray-800 hover:text-[#D4AF37] tracking-wider transition-colors">Shorts</Link>
+                <Link to="/category/Men?clothingType=Bottoms" onClick={() => setIsMobileMenuOpen(false)} className="text-[13px] uppercase text-gray-800 hover:text-[#D4AF37] tracking-wider transition-colors">Shorts</Link>
               </div>
             </div>
 
@@ -335,7 +335,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <Link to="/category/women/Tops%20%26%20Short%20Set" onClick={() => setIsMobileMenuOpen(false)} className="text-[13px] uppercase text-gray-800 hover:text-[#D4AF37] tracking-wider transition-colors">Tops & Short Set</Link>
                 <Link to="/category/women/Crop%20Tops" onClick={() => setIsMobileMenuOpen(false)} className="text-[13px] uppercase text-gray-800 hover:text-[#D4AF37] tracking-wider transition-colors">Crop Tops</Link>
                 <Link to="/category/women/Oversize" onClick={() => setIsMobileMenuOpen(false)} className="text-[13px] uppercase text-gray-800 hover:text-[#D4AF37] tracking-wider transition-colors">Oversize</Link>
-                <Link to="/category/women/Shorts" onClick={() => setIsMobileMenuOpen(false)} className="text-[13px] uppercase text-gray-800 hover:text-[#D4AF37] tracking-wider transition-colors">Shorts</Link>
+                <Link to="/category/Women?clothingType=Bottoms" onClick={() => setIsMobileMenuOpen(false)} className="text-[13px] uppercase text-gray-800 hover:text-[#D4AF37] tracking-wider transition-colors">Shorts</Link>
                 <Link to="/category/women/Leggings" onClick={() => setIsMobileMenuOpen(false)} className="text-[13px] uppercase text-gray-800 hover:text-[#D4AF37] tracking-wider transition-colors">Leggings</Link>
               </div>
             </div>
